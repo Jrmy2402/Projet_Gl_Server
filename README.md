@@ -13,30 +13,28 @@ This README would normally document whatever steps are necessary to get your app
 
 Commandes à lancer dans Cmder.
 
-* git init
+* **git init**
 Initialiser un dépôt git
-* git status
+* **git status**
 Voir les fichier non commités
-* git add
+* **git add**
 Permet de sauvegarder les fichiers
-* git commit -m "commentaire"
+* **git commit -m "commentaire"**
 Permet de commiter les fichiers modifiés
-* git diff NomFichier
+* **git diff NomFichier**
 Permet de voir les différences entre deux versions d'un fichier
-* git branch NomDeLaBranche
+* **git branch NomDeLaBranche**
 Création d'une branche
-* git checkout NomDeLaBranche
+* **git checkout NomDeLaBranche**
 Changer de branche
-* git merge NomDeLaBranche
+* **git merge NomDeLaBranche**
 Merge de la branche
-* git pull
-Récupération des mises à jours
-* git push
-Envoie des mises à jours sur le serveur git
-* git push origin master
+* **git pull / push**
+Récupération ou envoie des mises à jours
+* **git push origin master**
 Envoie des fichiers vers notre serveur
 
-* grunt server
+* **grunt server**
 Lancement du serveur en local
 
 ### Version ###
