@@ -14,6 +14,7 @@ This README would normally document whatever steps are necessary to get your app
 Commandes à lancer dans Cmder.
 
 * git init
+
 Initialiser un dépôt git
 * git status
 Voir les fichier non commités
