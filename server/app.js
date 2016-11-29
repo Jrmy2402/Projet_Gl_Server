@@ -21,7 +21,6 @@ mongoose.connection.on('error', function(err) {
 if(config.seedDB) { require('./config/seed'); }
 
 // Setup server
-console.log("bite");
 var app = express();
 var server = require('http').createServer(app);
 var socketio = require('socket.io')(server, {
