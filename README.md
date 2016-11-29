@@ -11,15 +11,36 @@ This README would normally document whatever steps are necessary to get your app
 
 ### Commandes utiles ###
 
-* Summary of set up
-* Configuration
-* Dependencies
-* Database configuration
-* How to run tests
-* Deployment instructions
+Commandes à lancer dans Cmder.
+
+* git init
+Initialiser un dépôt git
+* git status
+Voir les fichier non commités
+* git add
+Permet de sauvegarder les fichiers
+* git commit -m "commentaire"
+Permet de commiter les fichiers modifiés
+* git diff NomFichier
+Permet de voir les différences entre deux versions d'un fichier
+* git branch NomDeLaBranche
+Création d'une branche
+* git checkout NomDeLaBranche
+Changer de branche
+* git merge NomDeLaBranche
+Merge de la branche
+* git pull
+Récupération des mises à jours
+* git push
+Envoie des mises à jours sur le serveur git
+* git push origin master
+Envoie des fichiers vers notre serveur
+
+* grunt server
+Lancement du serveur en local
 
 ### Version ###
 
-* Version 1 :
+* Version 1.0 :
 
 Version nulle pour l'instant, bientôt le turfu !
