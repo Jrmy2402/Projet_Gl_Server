@@ -37,6 +37,11 @@ Envoie des fichiers vers notre serveur
 * **grunt server**
 Lancement du serveur en local
 
+* **C:\Program Files\MongoDB\Server\3.2\bin\mangod.exe**
+Exécution du serveur SQL 
+* **C:\Program Files\MongoDB\Server\3.2\bin\mango.exe**
+Pour lancer les requêtes SQL
+
 ### Version ###
 
 * Version 1.0 :
