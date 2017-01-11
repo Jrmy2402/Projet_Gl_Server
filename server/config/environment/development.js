@@ -5,7 +5,7 @@
 module.exports = {
   // MongoDB connection options
   mongo: {
-    uri: 'mongodb://localhost/projetgl-dev'
+    uri: 'mongodb://localhost/vrms'
   },
 
   seedDB: true

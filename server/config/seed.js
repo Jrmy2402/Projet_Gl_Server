@@ -15,3 +15,11 @@ var thingSeed = require('../api/thing/thing.seed.json');
 Thing.find({}).remove(function() {
   Thing.create(thingSeed);
 });
+
+// Insert seed data below
+var userSeed = require('../api/user/user.seed.json');
+
+// Insert seed inserts below
+User.find({}).remove(function() {
+  User.create(userSeed);
+});
