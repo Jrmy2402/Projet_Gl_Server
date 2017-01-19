@@ -8,5 +8,5 @@ module.exports = {
     uri: 'mongodb://localhost/vrms'
   },
 
-  seedDB: true
+  seedDB: false
 };
