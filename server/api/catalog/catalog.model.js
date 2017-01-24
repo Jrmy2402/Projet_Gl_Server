@@ -5,6 +5,8 @@ var mongoose = require('mongoose'),
 
 var CatalogSchema = new Schema({
   name: String,
+  update_date: { type: Date, default: Date.now },
+  create_date: Date,
   info: String,
   active: Boolean
 });
