@@ -7,12 +7,20 @@ var crypto = require('crypto');
 // Structure BDD user
 
 var UserSchema = new Schema({
-  name: String,
-  email: { type: String, lowercase: true },
+  firstname: { type: String, required: true },
+  lastname: { type: String, required: true },
+  address: String,
+  email: { type: String, lowercase: true, required: true },
+  phone: String,
   role: {
     type: String,
     default: 'user'
   },
+  VM: [{
+    OS: {type: String, default: 'noOS'},
+    version: {type: Number, default: '00'},
+    port: { type: Number, default: '8080'}
+  }],
   hashedPassword: String,
   provider: String,
   salt: String
