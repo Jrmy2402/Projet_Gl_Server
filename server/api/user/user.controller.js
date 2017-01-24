@@ -24,7 +24,7 @@ exports.index = function(req, res) {
  * Creates a new user
  */
 exports.create = function (req, res, next) {
-  var newUser = new User(req.body);
+  var newUser = new User(req.body.user);
   newUser.provider = 'local';
   newUser.role = 'user';
   newUser.save(function(err, user) {
