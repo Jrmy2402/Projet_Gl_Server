@@ -3,6 +3,7 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var crypto = require('crypto');
+var vm = require('../vm/vm.model').schema;
 
 // Structure BDD user
 
@@ -16,11 +17,7 @@ var UserSchema = new Schema({
     type: String,
     default: 'user'
   },
-  VM: [{
-    OS: {type: String, default: 'noOS'},
-    version: {type: Number, default: '00'},
-    port: { type: Number, default: '8080'}
-  }],
+  Vms: [vm],
   hashedPassword: String,
   provider: String,
   salt: String
@@ -45,7 +42,7 @@ UserSchema
   .virtual('profile')
   .get(function() {
     return {
-      'name': this.name,
+      'email': this.email,
       'role': this.role
     };
   });

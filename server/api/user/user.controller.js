@@ -1,6 +1,8 @@
 'use strict';
 
 var User = require('./user.model');
+var VM = require('../vm/vm.model');
+
 var passport = require('passport');
 var config = require('../../config/environment');
 var jwt = require('jsonwebtoken');
@@ -24,7 +26,8 @@ exports.index = function(req, res) {
  * Creates a new user
  */
 exports.create = function (req, res, next) {
-  var newUser = new User(req.body.user);
+  // debugger
+  var newUser = new User(req.body);
   newUser.provider = 'local';
   newUser.role = 'user';
   newUser.save(function(err, user) {
@@ -33,6 +36,38 @@ exports.create = function (req, res, next) {
     res.json({ token: token });
   });
 };
+
+/**
+ * Add a new vm
+ */
+exports.addvm = function(req, res, next) {
+    var userId = req.params.id;
+    User.findById(userId, function (err, user) {
+    user.Vms.push({
+        name: req.body.name,
+        version: req.body.version
+    });
+    user.save(function(err, user) {
+      res.status(200).json(user);
+    });
+  });
+};
+
+/**
+ * Delete vm
+ */
+exports.delvm = function(req, res, next) {
+    var userId = req.params.id;
+    User.findById(userId, function (err, user) {
+      user.Vms.id(req.params.idvm).remove();
+      user.save(function(err, user) {
+        if (err) return res.status(500).send(err);
+        res.status(200).json(user);
+      });
+    });
+};
+
+
 
 /**
  * Get a single user
