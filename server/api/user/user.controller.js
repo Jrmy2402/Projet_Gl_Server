@@ -43,9 +43,11 @@ exports.create = function (req, res, next) {
 exports.addvm = function(req, res, next) {
     var userId = req.params.id;
     User.findById(userId, function (err, user) {
+    console.log(req.body.application);
     user.Vms.push({
         name: req.body.name,
-        version: req.body.version
+        version: req.body.version,
+        application: req.body.application
     });
     user.save(function(err, user) {
       res.status(200).json(user);
