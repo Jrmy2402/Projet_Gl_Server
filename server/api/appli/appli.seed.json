@@ -1,0 +1,11 @@
+[
+	{
+	    "name" : "NodeJS",
+	    "info" : "BLALALALALALALALAL.",
+		"DockerCmd": "apt-get install node.js"
+	}, {
+	    "name" : "python server",
+	    "info" : "BLALALALALALALALAL Nath est un gros PD.",
+		"DockerCmd": "apt-get install python2.7"
+	}
+]
