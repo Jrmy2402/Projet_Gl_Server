@@ -5,6 +5,7 @@ var VM = require('../vm/vm.model');
 
 var passport = require('passport');
 var config = require('../../config/environment');
+var dockerfile = require('../../lib/dockerfile');
 var jwt = require('jsonwebtoken');
 
 var validationError = function(res, err) {
@@ -50,6 +51,7 @@ exports.addvm = function(req, res, next) {
         application: req.body.application
     });
     user.save(function(err, user) {
+      dockerfile.generate();
       res.status(200).json(user);
     });
   });

@@ -23,3 +23,11 @@ var userSeed = require('../api/user/user.seed.json');
 User.find({}).remove(function() {
   User.create(userSeed);
 });
+
+// Insert seed data below
+var appliSeed = require('../api/appli/appli.seed.json');
+
+// Insert seed inserts below
+appli.find({}).remove(function() {
+  appli.create(appliSeed);
+});
