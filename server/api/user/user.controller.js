@@ -27,7 +27,7 @@ exports.index = function(req, res) {
  */
 exports.create = function (req, res, next) {
   // debugger
-  var newUser = new User(req.body);
+  var newUser = new User(req.body.user);
   newUser.provider = 'local';
   newUser.role = 'user';
   newUser.save(function(err, user) {
