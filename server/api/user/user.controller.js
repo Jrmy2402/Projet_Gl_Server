@@ -6,9 +6,11 @@ var VM = require('../vm/vm.model');
 var passport = require('passport');
 var config = require('../../config/environment');
 var dockerfile = require('../../lib/dockerfile');
+var stripe = require('../../lib/stripe');
+
 var jwt = require('jsonwebtoken');
 
-var validationError = function(res, err) {
+var validationError = function (res, err) {
   return res.status(422).json(err);
 };
 
@@ -16,9 +18,9 @@ var validationError = function(res, err) {
  * Get list of users
  * restriction: 'admin'
  */
-exports.index = function(req, res) {
+exports.index = function (req, res) {
   User.find({}, '-salt -hashedPassword', function (err, users) {
-    if(err) return res.status(500).send(err);
+    if (err) return res.status(500).send(err);
     res.status(200).json(users);
   });
 };
@@ -31,28 +33,48 @@ exports.create = function (req, res, next) {
   var newUser = new User(req.body.user);
   newUser.provider = 'local';
   newUser.role = 'user';
-  newUser.save(function(err, user) {
+  newUser.save(function (err, user) {
     if (err) return validationError(res, err);
-    var token = jwt.sign({_id: user._id }, config.secrets.session, { expiresInMinutes: 60*5 });
-    res.json({ token: token });
+    var token = jwt.sign({
+      _id: user._id
+    }, config.secrets.session, {
+      expiresInMinutes: 60 * 5
+    });
+    res.json({
+      token: token
+    });
   });
 };
 
 /**
  * Add a new vm
  */
-exports.addvm = function(req, res, next) {
-    var userId = req.params.id;
-    User.findById(userId, function (err, user) {
-    console.log(req.body.application);
+exports.addvm = function (req, res, next) {
+  // var userId = req.params.id;
+  debugger
+  var userId = req.user._id;
+  debugger
+  User.findById(userId, function (err, user) {
+    debugger
+    // console.log(req.body.application);
     user.Vms.push({
-        name: req.body.name,
-        version: req.body.version,
-        application: req.body.application
+      OS: "Linux",
+      name: req.body.distribution,
+      application: req.body.application
     });
-    user.save(function(err, user) {
-      dockerfile.generate();
-      res.status(200).json(user);
+    user.save(function (err, user) {
+      stripe.payment(req.body.tokenCard).subscribe(
+        (data) => {
+          console.log(data);
+          res.status(200).json(user);
+        },
+        (err) => {
+          console.error(err);
+          res.status(402).json({message : "Erreur avec le paiement."});
+        }
+      );
+      // dockerfile.generate();
+      
     });
   });
 };
@@ -60,15 +82,15 @@ exports.addvm = function(req, res, next) {
 /**
  * Delete vm
  */
-exports.delvm = function(req, res, next) {
-    var userId = req.params.id;
-    User.findById(userId, function (err, user) {
-      user.Vms.id(req.params.idvm).remove();
-      user.save(function(err, user) {
-        if (err) return res.status(500).send(err);
-        res.status(200).json(user);
-      });
+exports.delvm = function (req, res, next) {
+  var userId = req.params.id;
+  User.findById(userId, function (err, user) {
+    user.Vms.id(req.params.idvm).remove();
+    user.save(function (err, user) {
+      if (err) return res.status(500).send(err);
+      res.status(200).json(user);
     });
+  });
 };
 
 
@@ -90,9 +112,9 @@ exports.show = function (req, res, next) {
  * Deletes a user
  * restriction: 'admin'
  */
-exports.destroy = function(req, res) {
-  User.findByIdAndRemove(req.params.id, function(err, user) {
-    if(err) return res.status(500).send(err);
+exports.destroy = function (req, res) {
+  User.findByIdAndRemove(req.params.id, function (err, user) {
+    if (err) return res.status(500).send(err);
     return res.status(204).send('No Content');
   });
 };
@@ -100,15 +122,15 @@ exports.destroy = function(req, res) {
 /**
  * Change a users password
  */
-exports.changePassword = function(req, res, next) {
+exports.changePassword = function (req, res, next) {
   var userId = req.user._id;
   var oldPass = String(req.body.oldPassword);
   var newPass = String(req.body.newPassword);
 
   User.findById(userId, function (err, user) {
-    if(user.authenticate(oldPass)) {
+    if (user.authenticate(oldPass)) {
       user.password = newPass;
-      user.save(function(err) {
+      user.save(function (err) {
         if (err) return validationError(res, err);
         res.status(200).send('OK');
       });
@@ -121,11 +143,11 @@ exports.changePassword = function(req, res, next) {
 /**
  * Get my info
  */
-exports.me = function(req, res, next) {
+exports.me = function (req, res, next) {
   var userId = req.user._id;
   User.findOne({
     _id: userId
-  }, '-salt -hashedPassword', function(err, user) { // don't ever give out the password or salt
+  }, '-salt -hashedPassword', function (err, user) { // don't ever give out the password or salt
     if (err) return next(err);
     if (!user) return res.status(401).send('Unauthorized');
     res.json(user);
@@ -135,6 +157,6 @@ exports.me = function(req, res, next) {
 /**
  * Authentication callback
  */
-exports.authCallback = function(req, res, next) {
+exports.authCallback = function (req, res, next) {
   res.redirect('/');
 };
