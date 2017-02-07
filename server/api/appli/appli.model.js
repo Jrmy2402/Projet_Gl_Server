@@ -9,4 +9,4 @@ var appliSchema = new Schema({
   DockerCmd: String
 });
 
-module.exports = mongoose.model('appli', appliSchema);
+module.exports = mongoose.model('Appli', appliSchema);

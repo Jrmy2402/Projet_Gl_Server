@@ -4,7 +4,7 @@ var mongoose = require('mongoose'),
     Schema = mongoose.Schema;
 
 var VmSchema = new Schema({
-  OS: String,
+  OS: { type: String, default: "Linux" },
   name: String,
   version: String,
   ad_date: { type: Date, default: Date.now },

@@ -8,7 +8,8 @@ var CatalogSchema = new Schema({
   update_date: { type: Date, default: Date.now },
   create_date: Date,
   info: String,
-  active: Boolean
+  active: Boolean,
+  DockerCmd: String
 });
 
 module.exports = mongoose.model('Catalog', CatalogSchema);

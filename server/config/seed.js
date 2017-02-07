@@ -7,6 +7,8 @@
 // Insert seed models below
 var Catalog = require('../api/catalog/catalog.model');
 var User = require('../api/user/user.model');
+var Appli = require('../api/appli/appli.model');
+
 
 // Insert seed data below
 var catalogSeed = require('../api/catalog/catalog.seed.json');
@@ -28,6 +30,6 @@ User.find({}).remove(function() {
 var appliSeed = require('../api/appli/appli.seed.json');
 
 // Insert seed inserts below
-appli.find({}).remove(function() {
-  appli.create(appliSeed);
+Appli.find({}).remove(function() {
+  Appli.create(appliSeed);
 });
