@@ -26,3 +26,9 @@ exports.generate = function () {
     //do something with the result..
   });
 };
+
+// db.getCollection('users').aggregate([
+//   {$unwind: '$Vms'},
+//   {$match: {'Vms._id': ObjectId("5898f74cc4ea33d837224d06")}},
+//   {$project: {_id: 0, 'Vm': '$Vms'}}
+// ])
