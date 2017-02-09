@@ -1,7 +1,16 @@
 var generator = require('dockerfile-generator');
+var User = require('../../api/user/user.model');
+var mongoose = require('mongoose');
 
 
-exports.generate = function () {
+exports.generate = function (idVm) {
+  User.aggregate([
+    {$unwind: '$Vms'},
+    {$match: {'Vms._id': mongoose.Types.ObjectId(idVm)}},
+    {$project: {_id: 0, 'Vm': '$Vms'}}
+  ]).exec((err, data) => {
+    console.log(err, data);
+  });
   let inputJSON = {
     "imagename": "node",
     "imageversion": "4.1.2",

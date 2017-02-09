@@ -1,7 +1,7 @@
 'use strict';
 
 var User = require('./user.model');
-var VM = require('../vm/vm.model');
+var Vm = require('../vm/vm.model');
 
 var passport = require('passport');
 var config = require('../../config/environment');
@@ -57,23 +57,31 @@ exports.addvm = function (req, res, next) {
   User.findById(userId, function (err, user) {
     debugger
     // console.log(req.body.application);
-    user.Vms.push({
+    // user.Vms.push({
+    //   OS: "Linux",
+    //   name: req.body.distribution,
+    //   application: req.body.application
+    // });
+    var vmSchema = new Vm({
       OS: "Linux",
       name: req.body.distribution,
       application: req.body.application
     });
+    let idVm = vmSchema._id;
+    user.Vms.push(vmSchema);
+    console.log(idVm);
     user.save(function (err, user) {
-      stripe.payment(req.body.tokenCard).subscribe(
-        (data) => {
-          console.log(data);
-          res.status(200).json(user);
-        },
-        (err) => {
-          console.error(err);
-          res.status(402).json({message : "Erreur avec le paiement."});
-        }
-      );
-      // dockerfile.generate();
+      // stripe.payment(req.body.tokenCard).subscribe(
+      //   (data) => {
+      //     console.log(data);
+      //     res.status(200).json(user);
+      //   },
+      //   (err) => {
+      //     console.error(err);
+      //     res.status(402).json({message : "Erreur avec le paiement."});
+      //   }
+      // );
+      dockerfile.generate(idVm);
       
     });
   });
