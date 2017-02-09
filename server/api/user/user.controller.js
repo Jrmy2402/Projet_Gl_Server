@@ -51,17 +51,9 @@ exports.create = function (req, res, next) {
  */
 exports.addvm = function (req, res, next) {
   // var userId = req.params.id;
-  debugger
   var userId = req.user._id;
-  debugger
   User.findById(userId, function (err, user) {
     debugger
-    // console.log(req.body.application);
-    // user.Vms.push({
-    //   OS: "Linux",
-    //   name: req.body.distribution,
-    //   application: req.body.application
-    // });
     var vmSchema = new Vm({
       OS: "Linux",
       name: req.body.distribution,
@@ -82,7 +74,6 @@ exports.addvm = function (req, res, next) {
       //   }
       // );
       dockerfile.generate(idVm);
-      
     });
   });
 };
