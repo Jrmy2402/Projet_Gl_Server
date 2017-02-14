@@ -1,7 +1,8 @@
-var generator = require('dockerfile-generator');
 var User = require('../../api/user/user.model');
 var Catalog = require('../../api/catalog/catalog.model');
 var mongoose = require('mongoose');
+var Builder = require("node-dockerfile");
+
 
 
 exports.generate = function (idVm) {
@@ -36,7 +37,7 @@ exports.generate = function (idVm) {
     }).catch(function (error) {
       console.log(error);
     });
-    
+
     //  Catalog.findOne({
     //   'name': distribution
     // }).exec(function (err, Catalog) {
@@ -44,29 +45,36 @@ exports.generate = function (idVm) {
     //   console.log(Catalog);
     // });
 
-    let inputJSON = {
-      "imagename": "node",
-      "imageversion": "4.1.2",
-      "copy": [{
-          "src": "path/to/src",
-          "dst": "/path/to/dst"
-        },
-        {
-          "src": "path/to/src",
-          "dst": "/path/to/dst"
-        }
-      ],
-      "cmd": {
-        "command": "cmd",
-        "args": ["arg1", "arg2"]
-      }
-    }
-    generator.generate(JSON.stringify(inputJSON), function (err, result) {
-      console.log(result);
-      //Result is a generated Dockerfile.
+    var dockerFile = new Builder();
 
-      //do something with the result..
-    });
+    // Let's just add in a bunch of funky commands for a bit of fun
+    dockerFile
+      .from("node:0.12.4")
+      .newLine()
+      .comment("Clone and install dockerfile")
+      .run([
+        "apt-get install -y git",
+        "git clone https://github.com/seikho/node-dockerfile /code/node-dockerfile"
+      ])
+      .newLine()
+      .run(["cd /code/node-dockerfile", "npm install"])
+      .run("npm install -g http-server toto")
+      .newLine()
+      .workDir("/code/node-dockerfile")
+      .cmd("http-server");
+
+    // .write takes a callback which takes 'error' and 'content'.
+    // Content being the content of the generated filed.
+    var cb = function (err, content) {
+      if (err) console.log("Failed to write: %s", err);
+      else console.log("Successfully wrote the dockerfile!");
+    }
+    // .write takes 3 arguments: 'location', 'replaceExisting' and the callback above.
+
+    dockerFile.write(".", true, cb);
+
+    // If all goes well...
+    // Console: >> 'Successfully wrote to dockerfile!' 
   });
 
 };
