@@ -1,5 +1,7 @@
 var User = require('../../api/user/user.model');
 var Catalog = require('../../api/catalog/catalog.model');
+var Appli = require('../../api/appli/appli.model');
+
 var mongoose = require('mongoose');
 var Builder = require("node-dockerfile");
 
@@ -23,14 +25,19 @@ exports.generate = function (idVm) {
   ]).exec((err, data) => {
     console.log(err, data[0].Vm);
     var distribution = data[0].Vm.name;
+    var application = data[0].Vm.application;
+    console.log("[Dockerfile] : distribution " + distribution);
+    console.log("[Dockerfile] : application " + application);
+
     var promises = [];
     // req.body.offreverifie = false;
     promises.push(Catalog.findOne({
       'name': distribution
     }));
-    promises.push(Catalog.findOne({
-      'name': 'Debian'
-    }));
+    // for (let appli of application) {
+
+    // }
+    promises.push(Appli.find().where('name').in(application));
 
     Promise.all(promises).then(function (data) {
       console.log(data);

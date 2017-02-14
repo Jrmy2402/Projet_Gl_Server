@@ -53,7 +53,7 @@ exports.addvm = function (req, res, next) {
   // var userId = req.params.id;
   var userId = req.user._id;
   User.findById(userId, function (err, user) {
-    debugger
+    
     var vmSchema = new Vm({
       OS: "Linux",
       name: req.body.distribution,
