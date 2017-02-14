@@ -4,7 +4,7 @@ var mongoose = require('mongoose'),
     Schema = mongoose.Schema;
 
 var appliSchema = new Schema({
-  application: String,
+  name: String,
   info: String,
   DockerCmd: String
 });
