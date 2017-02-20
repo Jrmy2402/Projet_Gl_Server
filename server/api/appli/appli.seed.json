@@ -2,10 +2,10 @@
 	{
 	    "name" : "NodeJS",
 	    "info" : "BLALALALALALALALAL.",
-		"DockerCmd": "apt-get install node.js"
+		"RunCmd": "apt-get install node.js"
 	}, {
 	    "name" : "python server",
 	    "info" : "BLALALALALALALALAL Nath est un gros PD.",
-		"DockerCmd": "apt-get install python2.7"
+		"RunCmd": "apt-get install python2.7"
 	}
 ]

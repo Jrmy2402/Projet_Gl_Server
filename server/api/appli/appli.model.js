@@ -6,7 +6,9 @@ var mongoose = require('mongoose'),
 var appliSchema = new Schema({
   name: String,
   info: String,
-  DockerCmd: String
+  RunCmd: String,
+  EntryPointCmd: String,
+  ExposeCmd: Number
 });
 
 module.exports = mongoose.model('Appli', appliSchema);

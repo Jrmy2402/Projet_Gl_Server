@@ -4,12 +4,12 @@
 	"create_date": "10-10-10",
 	"info": "Best VM EVER",
 	"active": "1",
-	"DockerCmd": "ubuntu:16.04"
+	"FromCmd": "ubuntu:16.04"
 }, {
 	"name": "Debian",
 	"update_date": "10-10-10",
 	"create_date": "10-10-10",
 	"info": "Best VM EVER",
 	"active": "1",
-	"DockerCmd": "debian:jessie"
+	"FromCmd": "debian:jessie"
 }]

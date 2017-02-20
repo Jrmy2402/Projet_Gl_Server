@@ -9,7 +9,7 @@ var CatalogSchema = new Schema({
   create_date: Date,
   info: String,
   active: Boolean,
-  DockerCmd: String
+  FromCmd: String
 });
 
 module.exports = mongoose.model('Catalog', CatalogSchema);
