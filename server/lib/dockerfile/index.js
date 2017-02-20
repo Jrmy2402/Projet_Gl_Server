@@ -3,7 +3,10 @@ var Catalog = require('../../api/catalog/catalog.model');
 var Appli = require('../../api/appli/appli.model');
 
 var mongoose = require('mongoose');
-var Builder = require("node-dockerfile");
+// var Builder = require("node-dockerfile");
+const Builder = require('node-dockerfile').Builder;
+var fs = require('fs');
+// import { Builder } from 'node-dockerfile';
 
 
 
@@ -37,34 +40,45 @@ exports.generate = function (idVm) {
 
     Promise.all(promises).then(function (data) {
       console.log(data);
-      let myFrom = data[0].DockerCmd;
-      let myAppli = data[0].DockerCmd;
+      let myFrom = data[0].FromCmd;
+      let myAppli = data[1];
       var dockerFile = new Builder();
       // Let's just add in a bunch of funky commands for a bit of fun
       dockerFile
-        .from("node:0.12.4")
+        .from(myFrom)
         .newLine()
         .comment("Clone and install dockerfile")
+        .arg("DEBIAN_FRONTEND", "noninteractive")
         .run([
-          "apt-get install -y git",
-          "git clone https://github.com/seikho/node-dockerfile /code/node-dockerfile"
+          "apt-get update",
+          "apt-get install -y openssh-server",
+          "apt-get clean"
         ])
-        .newLine()
-        .run(["cd /code/node-dockerfile", "npm install"])
-        .run("npm install -g http-server toto")
-        .newLine()
-        .workDir("/code/node-dockerfile")
-        .cmd("http-server");
+        .run("echo 'root:root' |chpasswd")
+        .run("sed -ri 's/^PermitRootLogin\s+.*/PermitRootLogin yes/' /etc/ssh/sshd_config", "sed -ri 's/UsePAM yes/#UsePAM yes/g' /etc/ssh/sshd_config")
+        .run("mkdir -p /var/run/sshd")
+        .run("apt-get install -y sudo && apt-get install -y curl")
+        .newLine();
 
-      // .write takes a callback which takes 'error' and 'content'.
-      // Content being the content of the generated filed.
-      var cb = function (err, content) {
+      if (myAppli) {
+        for (let myA of myAppli){
+          dockerFile.run(myA.RunCmd)
+          .newLine();
+        }
+      }
+
+      dockerFile.newLine()
+        .expose(22)
+        .newLine()
+        .entryPoint("/usr/sbin/sshd -D")
+        .cmd(["bash"]);
+
+      dockerFile.write("./Dockerfile", true, function (err, content) {
         if (err) console.log("Failed to write: %s", err);
         else console.log("Successfully wrote the dockerfile!");
-      }
-      // .write takes 3 arguments: 'location', 'replaceExisting' and the callback above.
+      });
 
-      dockerFile.write(".", true, cb);
+
     }).catch(function (error) {
       console.log(error);
     });
