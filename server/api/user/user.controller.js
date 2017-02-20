@@ -157,12 +157,13 @@ exports.me = function (req, res, next) {
  * Get my vm
  */
 exports.meVm = function (req, res, next) {
-  var userId = "58a2ce9c7ec302b82faa2b5d";
+  var userId = req.user._id;
   User.findOne({
     _id: userId
   }, '-salt -hashedPassword -role -provider', function (err, user) { // don't ever give out the password or salt
     if (err) return next(err);
     if (!user) return res.status(401).send('Unauthorized');
+    console.log(user.Vms);
     res.json(user.Vms);
   });
 };
