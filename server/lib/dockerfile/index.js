@@ -22,14 +22,15 @@ exports.generate = function (idVm) {
     },
     {
       $project: {
-        _id: 0,
+        //_id: 0,
         'Vm': '$Vms'
       }
     }
   ]).exec((err, data) => {
-    console.log(err, data[0].Vm);
+    console.log(err, data[0].Vm._id, data[0]._id);
     var distribution = data[0].Vm.name;
     var application = data[0].Vm.application;
+    var idVm = data[0].Vm._id;
     console.log("[Dockerfile] : distribution " + distribution);
     console.log("[Dockerfile] : application " + application);
 
@@ -78,7 +79,7 @@ exports.generate = function (idVm) {
         if (err) console.log("Failed to write: %s", err);
         else {
           console.log("Successfully wrote the dockerfile!");
-          builbImage();
+          builbImage(idVm);
         }
       });
 
@@ -91,7 +92,7 @@ exports.generate = function (idVm) {
 
 };
 
-function builbImage() {
+function builbImage(idVM) {
   var exec = require('child_process').exec;
   const spawn = require('child_process').spawn;
   const ls = spawn('docker', ['build', '-t', 'spriet/testssh', '.']);
@@ -107,14 +108,13 @@ function builbImage() {
   ls.on('close', (code) => {
     console.log(`child process exited with code ${code}`);
     if (code === 0) {
-      runDocker();
+      runDocker(idVM);
     }
   });
 }
 
-function runDocker() {
+function runDocker(idVM) {
   var exec = require('child_process').exec;
-
   client.get("Value_port", function (err, reply) {
     // reply is null when the key is missing 
     console.log(reply);
@@ -126,12 +126,24 @@ function runDocker() {
         if (error.code === 125) {
           console.error("Name deja utilisé :", error.stack)
         }
-      } else {
-        client.set("Value_port", reply+1);
-        console.log(stdout);
+      } else {   
+        User.findOneAndUpdate({
+            "Vms._id": mongoose.Types.ObjectId(idVM)
+          }, {
+            "$set": {
+              "Vms.$.idContainer": stdout,
+              "Vms.$.port":reply
+            }
+          },
+          function (err, doc) {
+            client.set("Value_port", Number(reply) + 1);
+            console.log(stdout);
+            console.log("ici");
+          }
+        );
       }
     });
-    
+
   });
 
 }

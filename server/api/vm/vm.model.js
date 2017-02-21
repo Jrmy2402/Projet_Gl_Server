@@ -11,6 +11,7 @@ var VmSchema = new Schema({
   exp_date: Date,
   port: Number,
   info: String,
+  idContainer: String,
   last_connexion: Date,
   active: Boolean,
   feedback:{

@@ -73,6 +73,7 @@ exports.addvm = function (req, res, next) {
       //     res.status(402).json({message : "Erreur avec le paiement."});
       //   }
       // );
+      res.status(200).json({message : 'Vm en création'});
       dockerfile.generate(idVm);
     });
   });
