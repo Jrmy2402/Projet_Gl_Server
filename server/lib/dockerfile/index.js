@@ -1,14 +1,15 @@
 var User = require('../../api/user/user.model');
 var Catalog = require('../../api/catalog/catalog.model');
 var Appli = require('../../api/appli/appli.model');
-
+var redis = require("redis"),
+  client = redis.createClient();
 var mongoose = require('mongoose');
-// var Builder = require("node-dockerfile");
 const Builder = require('node-dockerfile').Builder;
-var fs = require('fs');
-// import { Builder } from 'node-dockerfile';
-
-
+var Docker = require('dockerode');
+var docker = new Docker({
+  socketPath: '//./pipe/docker_engine',
+  version: 'v1.25'
+});
 
 exports.generate = function (idVm) {
   User.aggregate([{
@@ -61,9 +62,9 @@ exports.generate = function (idVm) {
         .newLine();
 
       if (myAppli) {
-        for (let myA of myAppli){
+        for (let myA of myAppli) {
           dockerFile.run(myA.RunCmd)
-          .newLine();
+            .newLine();
         }
       }
 
@@ -75,7 +76,10 @@ exports.generate = function (idVm) {
 
       dockerFile.write("./Dockerfile", true, function (err, content) {
         if (err) console.log("Failed to write: %s", err);
-        else console.log("Successfully wrote the dockerfile!");
+        else {
+          console.log("Successfully wrote the dockerfile!");
+          builbImage();
+        }
       });
 
 
@@ -86,3 +90,48 @@ exports.generate = function (idVm) {
   });
 
 };
+
+function builbImage() {
+  var exec = require('child_process').exec;
+  const spawn = require('child_process').spawn;
+  const ls = spawn('docker', ['build', '-t', 'spriet/testssh', '.']);
+
+  ls.stdout.on('data', (data) => {
+    console.log(`stdout: ${data}`);
+  });
+
+  ls.stderr.on('data', (data) => {
+    console.log(`stderr: ${data}`);
+  });
+
+  ls.on('close', (code) => {
+    console.log(`child process exited with code ${code}`);
+    if (code === 0) {
+      runDocker();
+    }
+  });
+}
+
+function runDocker() {
+  var exec = require('child_process').exec;
+
+  client.get("Value_port", function (err, reply) {
+    // reply is null when the key is missing 
+    console.log(reply);
+    var cmd = 'docker run -d -p ' + reply + ':22 spriet/testssh';
+    console.log(cmd);
+
+    exec(cmd, function (error, stdout, stderr) {
+      if (error) {
+        if (error.code === 125) {
+          console.error("Name deja utilisé :", error.stack)
+        }
+      } else {
+        client.set("Value_port", reply+1);
+        console.log(stdout);
+      }
+    });
+    
+  });
+
+}

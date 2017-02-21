@@ -2,7 +2,7 @@
 	{
 	    "name" : "NodeJS",
 	    "info" : "BLALALALALALALALAL.",
-		"RunCmd": "apt-get install node.js"
+		"RunCmd": "curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash - && sudo apt-get install nodejs"
 	}, {
 	    "name" : "python server",
 	    "info" : "BLALALALALALALALAL Nath est un gros PD.",

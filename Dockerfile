@@ -1,4 +1,4 @@
-FROM ubuntu:16.04
+FROM debian:jessie
  
 # Clone and install dockerfile
 ARG DEBIAN_FRONTEND=noninteractive
@@ -9,8 +9,9 @@ RUN echo 'root:root' |chpasswd
 RUN sed -ri 's/^PermitRootLogins+.*/PermitRootLogin yes/' /etc/ssh/sshd_config
 RUN mkdir -p /var/run/sshd
 RUN apt-get install -y sudo && apt-get install -y curl
-RUN apt-get install python2.7
-RUN apt-get install node.js
+ 
+RUN curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash - && sudo apt-get install nodejs
+ 
  
 EXPOSE 22
  
