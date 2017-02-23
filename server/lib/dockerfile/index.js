@@ -154,15 +154,19 @@ function runDocker(idVM) {
   client.get("Value_port", function (err, reply) {
     // reply is null when the key is missing 
     console.log(reply);
-    var cmd = 'docker run -d -p ' + reply + ':22 spriet/testssh';
+    var cmd = 'docker run -d -P spriet/testssh';
     console.log(cmd);
 
     exec(cmd, function (error, stdout, stderr) {
       if (error) {
         if (error.code === 125) {
-          console.error("Name deja utilisé :", error.stack)
+          console.error(error.stack)
         }
       } else {
+        var cmd2 = 'docker run -d -P --name test_sshd spriet/testssh';
+        exec(cmd2, function (error, stdout, stderr) {
+
+        });
         console.log(stdout.substring(0,stdout.length-1));
         User.findOneAndUpdate({
             "Vms._id": mongoose.Types.ObjectId(idVM)
