@@ -183,27 +183,58 @@ exports.meVmInfo = function (req, res, next) {
   var vmId = req.params.id;
   console.log("vmId :", vmId);
   var userId = req.user._id;
-  User.findOne({
-      '_id': userId,
-      'Vms.idContainer': vmId
-    }, '-salt -hashedPassword -role -provider',
-    function (err, vm) {
-      console.log("VM :", vm);
-      if (err) return next(err);
-      if (vm) {
-        dockerStats.execute(vmId).then(data => {
-          res.json({
-            stats: data
-          });
-        });
-      } else {
-        res.status(401).json({
-          message: "Erreur : Ce n'est pas votre vm!!"
-        });
+  User.aggregate([{
+      $unwind: '$Vms'
+    },
+    {
+      $match: {
+        'Vms._id': mongoose.Types.ObjectId(vmId),
+        '_id': userId
       }
-
+    },
+    {
+      $project: {
+        //_id: 0,
+        'Vm': '$Vms'
+      }
     }
-  );
+  ]).exec((err, data) => {
+    console.log("data :", data);
+    var infoVm = data[0].Vm;
+    if (data[0].Vm) {
+      dockerStats.execute(data[0].Vm.idContainer).then(data => {
+        infoVm.feedback = data;
+        res.json({
+          stats: infoVm
+        });
+      });
+    } else {
+      res.status(401).json({
+        message: "Erreur : Ce n'est pas votre vm!!"
+      });
+    }
+  });
+  // User.findOne({
+  //     '_id': userId,
+  //     'Vms.idContainer': vmId
+  //   }, '-salt -hashedPassword -role -provider',
+  //   function (err, vm) {
+  //     console.log("VM :", vm);
+  //     if (err) return next(err);
+  //     if (vm) {
+  //       dockerStats.execute(vmId).then(data => {
+  //         res.json({
+  //           stats: data
+  //         });
+  //       });
+  //     } else {
+  //       res.status(401).json({
+  //         message: "Erreur : Ce n'est pas votre vm!!"
+  //       });
+  //     }
+
+  //   }
+  // );
 
   // User.findOne({
   //   _id: userId
