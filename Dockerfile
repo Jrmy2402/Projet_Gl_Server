@@ -1,4 +1,4 @@
-FROM debian:jessie
+FROM ubuntu:16.04
  
 # Clone and install dockerfile
 ARG DEBIAN_FRONTEND=noninteractive
