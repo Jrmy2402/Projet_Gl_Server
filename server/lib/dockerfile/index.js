@@ -6,7 +6,10 @@ var client = redis.createClient();
 var mongoose = require('mongoose');
 const Builder = require('node-dockerfile').Builder;
 var Docker = require('dockerode');
-var docker = new Docker({socketPath: '//./pipe/docker_engine', version: 'v1.25'}); //defaults to above if env variables are not used
+var docker = new Docker({
+  socketPath: '//./pipe/docker_engine',
+  version: 'v1.25'
+}); //defaults to above if env variables are not used
 var Rx = require('rxjs/Rx');
 
 exports.generate = function (idVm) {
@@ -68,7 +71,7 @@ exports.generate = function (idVm) {
       if (myAppli) {
         for (let myA of myAppli) {
           dockerFile.run(myA.RunCmd);
-            // .newLine();
+          // .newLine();
         }
       }
 
@@ -97,34 +100,40 @@ exports.generate = function (idVm) {
 
 exports.infoVm = function (idVm, res) {
   // return Rx.Observable.create((observer) => {
-    var container = docker.getContainer(idVm);
-    // container.stop(function (err, data) {
-    //   console.log(data);
-    // });
-    // container.start(function (err, data) {
-    //   console.log(data);
-    // });
- 
+  var container = docker.getContainer(idVm);
+  // container.stop(function (err, data) {
+  //   console.log(data);
+  // });
+  // container.start(function (err, data) {
+  //   console.log(data);
+  // });
 
 
-    // container.start(function (err, data) {
-    //   console.log(data);
-    // });
-    // query API for container info
-    container.stats({stream:false}, function(err, stream){
-          // to close the stream you need to use a nested method from inside the stream itself
-          var cpuDelta = stream.cpu_stats.cpu_usage.total_usage -  stream.precpu_stats.cpu_usage.total_usage;
-          var systemDelta = stream.cpu_stats.system_cpu_usage - stream.precpu_stats.system_cpu_usage;
-          var RESULT_CPU_USAGE = cpuDelta / systemDelta * 100;
-          console.log(RESULT_CPU_USAGE, stream);
-          res.json({cpu:RESULT_CPU_USAGE, cpuDelta : cpuDelta, memory_stats: stream.memory_stats});
-          // stream.destroy()
+
+  // container.start(function (err, data) {
+  //   console.log(data);
+  // });
+  // query API for container info
+  container.stats({
+    stream: false
+  }, function (err, stream) {
+    // to close the stream you need to use a nested method from inside the stream itself
+    var cpuDelta = stream.cpu_stats.cpu_usage.total_usage - stream.precpu_stats.cpu_usage.total_usage;
+    var systemDelta = stream.cpu_stats.system_cpu_usage - stream.precpu_stats.system_cpu_usage;
+    var RESULT_CPU_USAGE = cpuDelta / systemDelta * 100;
+    console.log(RESULT_CPU_USAGE, stream);
+    res.json({
+      cpu: RESULT_CPU_USAGE,
+      cpuDelta: cpuDelta,
+      memory_stats: stream.memory_stats
     });
-    // container.inspect(function (err, data) {
-    //   console.log(data);
-    //   // observer.next(data);
-    //   // observer.complete();
-    // });
+    // stream.destroy()
+  });
+  // container.inspect(function (err, data) {
+  //   console.log(data);
+  //   // observer.next(data);
+  //   // observer.complete();
+  // });
   // });
 }
 
@@ -151,10 +160,16 @@ function builbImage(idVM) {
 
 function runDocker(idVM) {
   var exec = require('child_process').exec;
-  client.get("Value_port", function (err, reply) {
-    // reply is null when the key is missing 
+  client.get("Value_name", function (err, reply) {
+    var num_name;
     console.log(reply);
-    var cmd = 'docker run -d -P spriet/testssh';
+    if(err){
+      num_name = 1;
+    } else {
+      num_name = reply;
+    }
+    // reply is null when the key is missing 
+    var cmd = 'docker run -d -P --name name_' + num_name + ' spriet/testssh';
     console.log(cmd);
 
     exec(cmd, function (error, stdout, stderr) {
@@ -163,27 +178,32 @@ function runDocker(idVM) {
           console.error(error.stack)
         }
       } else {
-        var cmd2 = 'docker run -d -P --name test_sshd spriet/testssh';
+        var idContainer = stdout.substring(0, stdout.length - 1);
+        var cmd2 = 'docker port name_' + num_name + ' 22';
         exec(cmd2, function (error, stdout, stderr) {
-
-        });
-        console.log(stdout.substring(0,stdout.length-1));
-        User.findOneAndUpdate({
-            "Vms._id": mongoose.Types.ObjectId(idVM)
-          }, {
-            "$set": {
-              "Vms.$.idContainer": stdout.substring(0,stdout.length-1),
-              "Vms.$.port": reply,
-              "Vms.$.ip": "127.0.0.1",
-              "Vms.$.info": "On"
+          if (error) {
+            if (error.code === 125) {
+              console.error(error.stack)
             }
-          },
-          function (err, doc) {
-            client.set("Value_port", Number(reply) + 1);
-            console.log(stdout);
-            console.log("ici");
+          } else {
+            var port = stdout.substring(0, stdout.length - 1).slice(8);
+            console.log(port);
+            User.findOneAndUpdate({
+                "Vms._id": mongoose.Types.ObjectId(idVM)
+              }, {
+                "$set": {
+                  "Vms.$.idContainer": idContainer,
+                  "Vms.$.port": port,
+                  "Vms.$.ip": "127.0.0.1",
+                  "Vms.$.info": "On"
+                }
+              },
+              function (err, doc) {
+                client.set("Value_name", Number(num_name) + 1);
+              }
+            );
           }
-        );
+        });
       }
     });
 
