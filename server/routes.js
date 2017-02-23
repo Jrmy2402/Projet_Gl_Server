@@ -14,7 +14,6 @@ module.exports = function(app) {
   app.use('/api/applis', require('./api/appli'));
   //app.use('/api/vms', require('./api/user/vm'));
 
-  app.use('/auth', require('./auth'));
-  
+  app.use('/auth', require('./auth'));  
 
 };

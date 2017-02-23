@@ -10,6 +10,7 @@ var VmSchema = new Schema({
   ad_date: { type: Date, default: Date.now },
   exp_date: Date,
   port: Number,
+  ip: String,
   info: String,
   idContainer: String,
   last_connexion: Date,
