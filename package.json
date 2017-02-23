@@ -70,6 +70,7 @@
   },
   "scripts": {
     "start": "node server/app.js",
+    "start-prod": "NODE_ENV=production node server/app.js",
     "test": "grunt test"
   },
   "private": true
