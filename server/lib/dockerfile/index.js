@@ -57,7 +57,7 @@ exports.generate = function (idVm) {
         .newLine()
         .run("echo 'root:root' |chpasswd")
         .newLine()
-        .run("sed -ri 's/^PermitRootLogin\s+.*/PermitRootLogin yes/' /etc/ssh/sshd_config && sed -ri 's/UsePAM yes/#UsePAM yes/g' /etc/ssh/sshd_config")
+        .run("sed -ri 's/^PermitRootLogin\\s+.*/PermitRootLogin yes/' /etc/ssh/sshd_config && sed -ri 's/UsePAM yes/#UsePAM yes/g' /etc/ssh/sshd_config")
         .newLine()
         .run("mkdir -p /var/run/sshd")
         .newLine()
