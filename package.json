@@ -3,14 +3,16 @@
   "version": "0.0.0",
   "main": "server/app.js",
   "dependencies": {
-    "body-parser": "~1.5.0",
+    "body-parser": "^1.5.2",
     "composable-middleware": "^0.3.0",
     "compression": "~1.0.1",
     "connect-mongo": "^0.8.1",
     "cookie-parser": "~1.0.1",
+    "docker-stats-promise": "^1.0.3",
     "dockerode": "^2.3.1",
     "errorhandler": "~1.0.0",
-    "express": "~4.9.0",
+    "express": "^4.9.8",
+    "express-http-proxy": "^0.11.0",
     "express-jwt": "^3.0.0",
     "express-session": "~1.0.2",
     "jsonwebtoken": "^5.0.0",
@@ -68,6 +70,7 @@
   },
   "scripts": {
     "start": "node server/app.js",
+    "start-prod": "NODE_ENV=production node server/app.js",
     "test": "grunt test"
   },
   "private": true

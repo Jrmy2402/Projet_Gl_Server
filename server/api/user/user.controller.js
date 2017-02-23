@@ -7,8 +7,12 @@ var passport = require('passport');
 var config = require('../../config/environment');
 var dockerfile = require('../../lib/dockerfile');
 var stripe = require('../../lib/stripe');
+var DockerStats = require('docker-stats-promise');
+const dockerStats = new DockerStats();
+var mongoose = require('mongoose');
 
 var jwt = require('jsonwebtoken');
+
 
 var validationError = function (res, err) {
   return res.status(422).json(err);
@@ -53,11 +57,12 @@ exports.addvm = function (req, res, next) {
   // var userId = req.params.id;
   var userId = req.user._id;
   User.findById(userId, function (err, user) {
-    
+
     var vmSchema = new Vm({
       OS: "Linux",
       name: req.body.distribution,
-      application: req.body.application
+      application: req.body.application,
+      info: "Loading"
     });
     let idVm = vmSchema._id;
     user.Vms.push(vmSchema);
@@ -73,6 +78,9 @@ exports.addvm = function (req, res, next) {
       //     res.status(402).json({message : "Erreur avec le paiement."});
       //   }
       // );
+      res.status(200).json({
+        message: 'Vm en création'
+      });
       dockerfile.generate(idVm);
     });
   });
@@ -166,6 +174,44 @@ exports.meVm = function (req, res, next) {
     console.log(user.Vms);
     res.json(user.Vms);
   });
+};
+
+/**
+ * Get my vm
+ */
+exports.meVmInfo = function (req, res, next) {
+  var vmId = req.params.id;
+  var userId = req.user._id;
+  User.findOne({
+      '_id': userId,
+      'Vms.idContainer': vmId
+    }, '-salt -hashedPassword -role -provider',
+    function (err, vm) {
+      console.log(vm);
+      if (err) return next(err);
+      if (vm) {
+        dockerStats.execute(vmId).then(data => {
+          res.json({
+            stats: data
+          });
+        });
+      } else {
+        res.status(401).json({
+          message: "Erreur : Ce n'est pas votre vm!!"
+        });
+      }
+
+    }
+  );
+
+  // User.findOne({
+  //   _id: userId
+  // }, '-salt -hashedPassword -role -provider', function (err, user) { // don't ever give out the password or salt
+  //   if (err) return next(err);
+  //   if (!user) return res.status(401).send('Unauthorized');
+  //   console.log(user.Vms);
+  //   res.json(user.Vms);
+  // });
 };
 
 /**
