@@ -181,13 +181,14 @@ exports.meVm = function (req, res, next) {
  */
 exports.meVmInfo = function (req, res, next) {
   var vmId = req.params.id;
+  console.log("vmId :", vmId);
   var userId = req.user._id;
   User.findOne({
       '_id': userId,
       'Vms.idContainer': vmId
     }, '-salt -hashedPassword -role -provider',
     function (err, vm) {
-      console.log(vm);
+      console.log("VM :", vm);
       if (err) return next(err);
       if (vm) {
         dockerStats.execute(vmId).then(data => {
