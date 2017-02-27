@@ -262,7 +262,6 @@ exports.meVmStop = function (req, res, next) {
                 message: "Stop Vm"
               });
             });
-          );
         } else {
           res.status(500).json({
                 message: "Erreur Vm"
