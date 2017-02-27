@@ -7,9 +7,8 @@ var passport = require('passport');
 var config = require('../../config/environment');
 var dockerfile = require('../../lib/dockerfile');
 var stripe = require('../../lib/stripe');
-var DockerStats = require('docker-stats-promise');
-const dockerStats = new DockerStats();
 var mongoose = require('mongoose');
+var dockerStats = dockerfile.dockerStats;
 
 var jwt = require('jsonwebtoken');
 
@@ -199,7 +198,6 @@ exports.meVmInfo = function (req, res, next) {
       }
     }
   ]).exec((err, data) => {
-    console.log("data :", data);
     var infoVm = data[0].Vm;
     if (data[0].Vm) {
       dockerStats.execute(data[0].Vm.idContainer).then(data => {
@@ -214,36 +212,6 @@ exports.meVmInfo = function (req, res, next) {
       });
     }
   });
-  // User.findOne({
-  //     '_id': userId,
-  //     'Vms.idContainer': vmId
-  //   }, '-salt -hashedPassword -role -provider',
-  //   function (err, vm) {
-  //     console.log("VM :", vm);
-  //     if (err) return next(err);
-  //     if (vm) {
-  //       dockerStats.execute(vmId).then(data => {
-  //         res.json({
-  //           stats: data
-  //         });
-  //       });
-  //     } else {
-  //       res.status(401).json({
-  //         message: "Erreur : Ce n'est pas votre vm!!"
-  //       });
-  //     }
-
-  //   }
-  // );
-
-  // User.findOne({
-  //   _id: userId
-  // }, '-salt -hashedPassword -role -provider', function (err, user) { // don't ever give out the password or salt
-  //   if (err) return next(err);
-  //   if (!user) return res.status(401).send('Unauthorized');
-  //   console.log(user.Vms);
-  //   res.json(user.Vms);
-  // });
 };
 
 /**

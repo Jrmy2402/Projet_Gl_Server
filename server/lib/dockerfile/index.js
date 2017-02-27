@@ -1,8 +1,7 @@
 var User = require('../../api/user/user.model');
 var Catalog = require('../../api/catalog/catalog.model');
 var Appli = require('../../api/appli/appli.model');
-var redis = require("redis");
-var client = redis.createClient();
+var client = require('../../config/redis.js').client;
 var mongoose = require('mongoose');
 const Builder = require('node-dockerfile').Builder;
 var Docker = require('dockerode');
@@ -11,6 +10,11 @@ var docker = new Docker({
   version: 'v1.25'
 }); //defaults to above if env variables are not used
 var Rx = require('rxjs/Rx');
+var DockerStats = require('docker-stats-promise');
+const dockerStats = new DockerStats();
+// const socketio = require('../../app.js').socketio;
+
+exports.dockerStats = dockerStats;
 
 exports.generate = function (idVm) {
   User.aggregate([{
@@ -160,10 +164,10 @@ function builbImage(idVM) {
 
 function runDocker(idVM) {
   var exec = require('child_process').exec;
-  client.get("Value_name", function (err, reply) {
+  client.incr("Value_name", function (err, reply) {
     var num_name;
     console.log(reply);
-    if(err){
+    if (err) {
       num_name = 1;
     } else {
       num_name = reply;
@@ -199,7 +203,8 @@ function runDocker(idVM) {
                 }
               },
               function (err, doc) {
-                client.set("Value_name", Number(num_name) + 1);
+                console.log("runDocker : FINI")
+                // client.set("Value_name", Number(num_name) + 1);
               }
             );
           }
@@ -209,4 +214,98 @@ function runDocker(idVM) {
 
   });
 
+}
+
+exports.statsVm = function statsVm(time, socketio) {
+  setInterval(() => {
+    // Récupère les vms que l'on demande les stats
+    client.smembers("Tab_stats_vm", (err, Table_Vm) => {
+      if (Table_Vm.length > 0) {
+        for (const idVm of Table_Vm) {
+          // Récupère dans le cache les infos de la vm
+          client.get("InfoVm:" + idVm, (err, data) => {
+            var infoVm = JSON.parse(data);
+            // Excute la recherche des stats de docker
+            dockerStats.execute(infoVm.idContainer).then(data => {
+              infoVm.feedback = data;
+              // Récupère les sockets qui demande les stats de cette vm
+              client.smembers("SocketDemandeInfo:" + infoVm._id, (err, idSockets) => {
+                for (const id of idSockets) {
+                  console.log("Envoie idSocket : ", id);
+                  // Envoie les infos de la vm au socket
+                  socketio.to(id).emit('infoVm', infoVm);
+                }
+              });
+            })
+          });
+        }
+      }
+    });
+  }, time);
+}
+
+exports.register = function (socket) {
+  socket.on('statsVm', (vmId) => {
+    console.log('idVM', vmId, socket.id, socket.decoded_token._id);
+    var userId = socket.decoded_token._id;
+    User.aggregate([{
+        $unwind: '$Vms'
+      },
+      {
+        $match: {
+          'Vms._id': mongoose.Types.ObjectId(vmId),
+          '_id': mongoose.Types.ObjectId(userId)
+        }
+      },
+      {
+        $project: {
+          'Vm': '$Vms'
+        }
+      }
+    ]).exec((err, data) => {
+      if (data[0].Vm) {
+        // Stocke les Infos de la vm dans le cache
+        var infoVm = JSON.stringify(data[0].Vm);
+        client.set("InfoVm:" + vmId, infoVm);
+        client.expire("InfoVm:" + vmId, 86400);
+        // Incrémente le nombre de socket qui demande les stats de cette vm
+        client.incr("NombreVmDemander:" + vmId);
+        client.expire("NombreVmDemander:" + vmId, 86400);
+        // Stocke les sockets qui demande les stats d'une vm
+        client.sadd("SocketDemandeInfo:" + vmId, socket.id);
+        client.expire("SocketDemandeInfo:" + vmId, 86400);
+
+        // Stocke la vm que le socket demande à avoir les stats
+        client.set("Socket:" + socket.id, vmId);
+        client.expire("Socket:" + socket.id, 86400);
+        // Rajoute la vm au tableau des stats à lire
+        client.sadd("Tab_stats_vm", vmId);
+        client.expire("Tab_stats_vm", 86400);
+      } else {
+        socket.emit('infoVm', {
+          message: "Erreur : Ce n'est pas votre vm!!"
+        });
+      }
+    });
+  });
+  socket.on('disconnect', function () {
+    // Récupère id de la vm que le Socket demander
+    client.get("Socket:" + socket.id, (err, vmId) => {
+      if (vmId) {
+        // Supprime le socket
+        client.del("Socket:" + socket.id);
+        // Supprime le socket du tableau qui stocke les sockets qui demande les stats d'une vm
+        client.srem("SocketDemandeInfo:" + vmId, socket.id);
+        client.expire("SocketDemandeInfo:" + vmId, 86400);
+        // Décrement le nombre de socket qui demande cette vm
+        client.decr("NombreVmDemander:" + vmId, function (err, reply) {
+          client.expire("NombreVmDemander:" + vmId, 86400);
+          // Si le nombre est égale à 0 on supprime la vm dans le tableau des vm qui sont demandé à avoir les stats
+          if (reply == 0) {
+            client.srem("Tab_stats_vm", vmId);
+          }
+        });
+      }
+    });
+  });
 }
