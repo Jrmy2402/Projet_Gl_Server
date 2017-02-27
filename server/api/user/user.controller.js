@@ -253,7 +253,7 @@ exports.meVmStop = function (req, res, next) {
               }
             },
             function (err, doc) {
-              console.log(doc[0].Vm);
+              console.log(doc);
               res.status(200).json({
                 message: "Stop Vm"
               });
@@ -311,7 +311,7 @@ exports.meVmStart = function (req, res, next) {
               }
             },
             function (err, doc) {
-              console.log(doc[0].Vm);
+              console.log(doc);
               res.status(200).json({
                 message: "Start Vm"
               });
