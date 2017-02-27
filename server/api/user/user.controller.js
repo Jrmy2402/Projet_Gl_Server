@@ -300,7 +300,7 @@ exports.meVmStart = function (req, res, next) {
     var infoVm = data[0].Vm;
     if (infoVm) {
       console.log("Start id :", infoVm.idContainer);
-      docker.getContainer(infoVm.idContainer).stop(function (err, data) {
+      docker.getContainer(infoVm.idContainer).start(function (err, data) {
         console.log(data, err);
         if (!err) {
           User.findOneAndUpdate({
