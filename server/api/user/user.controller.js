@@ -243,7 +243,7 @@ exports.meVmStop = function (req, res, next) {
     if (infoVm) {
       console.log("Stop id :", infoVm.idContainer);
       docker.getContainer(infoVm.idContainer).stop(function (err, data) {
-        console.log(data);
+        console.log(data, err);
         User.findOneAndUpdate({
             "Vms._id": mongoose.Types.ObjectId(infoVm._id)
           }, {
