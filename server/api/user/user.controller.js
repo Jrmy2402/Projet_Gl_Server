@@ -251,17 +251,17 @@ exports.meVmStop = function (req, res, next) {
               "$set": {
                 "Vms.$.info": "Off"
               }
-            },
-            function (err, doc) {
-              console.log(doc);
+            }).exec((err, data) => {
+              console.log(data);
+              data.Vms[0].info = 'Off';
               // Stocke les Infos de la vm dans le cache
-              var infoVm = JSON.stringify(doc.Vms[0]);
-              client.set("InfoVm:" + doc._id, infoVm);
-              client.expire("InfoVm:" + doc._id, 86400);
+              var infoVm = JSON.stringify(data.Vms[0]);
+              client.set("InfoVm:" + data._id, infoVm);
+              client.expire("InfoVm:" + data._id, 86400);
               res.status(200).json({
                 message: "Stop Vm"
               });
-            }
+            });
           );
         } else {
           res.status(500).json({
@@ -315,7 +315,7 @@ exports.meVmStart = function (req, res, next) {
               }
             }).exec((err, data) => {
               console.log(data);
-              data.Vms[0]
+              data.Vms[0].info = 'On';
               // Stocke les Infos de la vm dans le cache
               var infoVm = JSON.stringify(data.Vms[0]);
               client.set("InfoVm:" + data._id, infoVm);
