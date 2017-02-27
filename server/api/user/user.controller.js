@@ -244,19 +244,27 @@ exports.meVmStop = function (req, res, next) {
       console.log("Stop id :", infoVm.idContainer);
       docker.getContainer(infoVm.idContainer).stop(function (err, data) {
         console.log(data, err);
-        User.findOneAndUpdate({
-            "Vms._id": mongoose.Types.ObjectId(infoVm._id)
-          }, {
-            "$set": {
-              "Vms.$.info": "Off"
+        if (!err) {
+          User.findOneAndUpdate({
+              "Vms._id": mongoose.Types.ObjectId(infoVm._id)
+            }, {
+              "$set": {
+                "Vms.$.info": "Off"
+              }
+            },
+            function (err, doc) {
+              cosnole.log(doc[0].Vm);
+              res.status(200).json({
+                message: "Stop Vm"
+              });
             }
-          },
-          function (err, doc) {
-             res.status(200).json({
-              message: "Stop Vm"
-            });
-          }
-        );
+          );
+        } else {
+          res.status(500).json({
+                message: "Erreur Vm"
+          });
+        }
+
       });
     } else {
       res.status(401).json({
@@ -290,9 +298,31 @@ exports.meVmStart = function (req, res, next) {
     }
   ]).exec((err, data) => {
     var infoVm = data[0].Vm;
-    if (data[0].Vm) {
-      docker.getContainer(data[0].Vm.idContainer).start(function (err, data) {
-        console.log(data);
+    if (infoVm) {
+      console.log("Start id :", infoVm.idContainer);
+      docker.getContainer(infoVm.idContainer).stop(function (err, data) {
+        console.log(data, err);
+        if (!err) {
+          User.findOneAndUpdate({
+              "Vms._id": mongoose.Types.ObjectId(infoVm._id)
+            }, {
+              "$set": {
+                "Vms.$.info": "On"
+              }
+            },
+            function (err, doc) {
+              cosnole.log(doc[0].Vm);
+              res.status(200).json({
+                message: "Start Vm"
+              });
+            }
+          );
+        } else {
+          res.status(500).json({
+                message: "Erreur Start Vm"
+          });
+        }
+
       });
     } else {
       res.status(401).json({
