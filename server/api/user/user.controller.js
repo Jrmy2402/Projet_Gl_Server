@@ -249,7 +249,7 @@ exports.meVmStop = function (req, res, next) {
               "Vms._id": mongoose.Types.ObjectId(infoVm._id)
             }, {
               "$set": {
-                "Vms.info": "Off"
+                "Vms.$.info": "Off"
               }
             },
             function (err, doc) {
@@ -311,21 +311,19 @@ exports.meVmStart = function (req, res, next) {
               "Vms._id": mongoose.Types.ObjectId(infoVm._id)
             }, {
               "$set": {
-                "Vms.info": "On"
+                "Vms.$.info": "On"
               }
-            },
-            function (err, doc) {
-              console.log(doc);
-              //doc.Vms[0].info
+            }).exec((err, data) => {
+              console.log(data);
+              data.Vms[0]
               // Stocke les Infos de la vm dans le cache
-              var infoVm = JSON.stringify(doc.Vms[0]);
-              client.set("InfoVm:" + doc._id, infoVm);
-              client.expire("InfoVm:" + doc._id, 86400);
+              var infoVm = JSON.stringify(data.Vms[0]);
+              client.set("InfoVm:" + data._id, infoVm);
+              client.expire("InfoVm:" + data._id, 86400);
               res.status(200).json({
                 message: "Start Vm"
               });
-            }
-          );
+            });
         } else {
           res.status(500).json({
                 message: "Erreur Start Vm"
