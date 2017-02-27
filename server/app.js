@@ -12,11 +12,7 @@ var mongoose = require('mongoose');
 var config = require('./config/environment');
 var dockerfile = require('./lib/dockerfile')
 var User = require('./api/user/user.model');
-var Docker = require('dockerode');
-var docker = new Docker({
-	socketPath: '//./pipe/docker_engine',
-	version: 'v1.25'
-}); //defaults to above if env variables are not used
+var docker = require('./config/dockerode').docker;
 
 // Connect to database
 mongoose.connect(config.mongo.uri, config.mongo.options);

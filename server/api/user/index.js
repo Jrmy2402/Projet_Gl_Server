@@ -12,6 +12,8 @@ router.delete('/:id', auth.hasRole('admin'), controller.destroy);
 router.get('/me', auth.isAuthenticated(), controller.me);
 router.get('/meVm', auth.isAuthenticated(), controller.meVm);
 router.get('/meVm/:id', auth.isAuthenticated(), controller.meVmInfo);
+router.get('/meVmStop/:id', auth.isAuthenticated(), controller.meVmStop);
+router.get('/meVmStart/:id', auth.isAuthenticated(), controller.meVmStart);
 router.put('/:id/password', auth.isAuthenticated(), controller.changePassword);
 router.get('/:id', auth.isAuthenticated(), controller.show);
 router.post('/', controller.create);

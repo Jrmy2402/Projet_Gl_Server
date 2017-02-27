@@ -9,6 +9,8 @@ var dockerfile = require('../../lib/dockerfile');
 var stripe = require('../../lib/stripe');
 var mongoose = require('mongoose');
 var dockerStats = dockerfile.dockerStats;
+var docker = require('../../config/dockerode').docker;
+
 
 var jwt = require('jsonwebtoken');
 
@@ -205,6 +207,78 @@ exports.meVmInfo = function (req, res, next) {
         res.json({
           stats: infoVm
         });
+      });
+    } else {
+      res.status(401).json({
+        message: "Erreur : Ce n'est pas votre vm!!"
+      });
+    }
+  });
+};
+
+/**
+ * Get my vm
+ */
+exports.meVmStop = function (req, res, next) {
+  var vmId = req.params.id;
+  console.log("vmId :", vmId);
+  var userId = req.user._id;
+  User.aggregate([{
+      $unwind: '$Vms'
+    },
+    {
+      $match: {
+        'Vms._id': mongoose.Types.ObjectId(vmId),
+        '_id': userId
+      }
+    },
+    {
+      $project: {
+        //_id: 0,
+        'Vm': '$Vms'
+      }
+    }
+  ]).exec((err, data) => {
+    var infoVm = data[0].Vm;
+    if (data[0].Vm) {
+      docker.getContainer(data[0].Vm.idContainer).stop(function (err, data) {
+        console.log(data);
+      });
+    } else {
+      res.status(401).json({
+        message: "Erreur : Ce n'est pas votre vm!!"
+      });
+    }
+  });
+};
+
+/**
+ * Get my vm
+ */
+exports.meVmStart = function (req, res, next) {
+  var vmId = req.params.id;
+  console.log("vmId :", vmId);
+  var userId = req.user._id;
+  User.aggregate([{
+      $unwind: '$Vms'
+    },
+    {
+      $match: {
+        'Vms._id': mongoose.Types.ObjectId(vmId),
+        '_id': userId
+      }
+    },
+    {
+      $project: {
+        //_id: 0,
+        'Vm': '$Vms'
+      }
+    }
+  ]).exec((err, data) => {
+    var infoVm = data[0].Vm;
+    if (data[0].Vm) {
+      docker.getContainer(data[0].Vm.idContainer).start(function (err, data) {
+        console.log(data);
       });
     } else {
       res.status(401).json({
