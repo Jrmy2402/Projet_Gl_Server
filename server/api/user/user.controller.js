@@ -249,7 +249,7 @@ exports.meVmStop = function (req, res, next) {
               "Vms._id": mongoose.Types.ObjectId(infoVm._id)
             }, {
               "$set": {
-                "Vms.$.info": "Off"
+                "Vms.info": "Off"
               }
             },
             function (err, doc) {
@@ -311,11 +311,12 @@ exports.meVmStart = function (req, res, next) {
               "Vms._id": mongoose.Types.ObjectId(infoVm._id)
             }, {
               "$set": {
-                "Vms.$.info": "On"
+                "Vms.info": "On"
               }
             },
             function (err, doc) {
               console.log(doc);
+              //doc.Vms[0].info
               // Stocke les Infos de la vm dans le cache
               var infoVm = JSON.stringify(doc.Vms[0]);
               client.set("InfoVm:" + doc._id, infoVm);
