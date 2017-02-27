@@ -10,7 +10,7 @@ var stripe = require('../../lib/stripe');
 var mongoose = require('mongoose');
 var dockerStats = dockerfile.dockerStats;
 var docker = require('../../config/dockerode').docker;
-
+var client = require('../../config/redis.js').client;
 
 var jwt = require('jsonwebtoken');
 
@@ -254,6 +254,10 @@ exports.meVmStop = function (req, res, next) {
             },
             function (err, doc) {
               console.log(doc);
+              // Stocke les Infos de la vm dans le cache
+              var infoVm = JSON.stringify(doc.Vms[0]);
+              client.set("InfoVm:" + doc._id, infoVm);
+              client.expire("InfoVm:" + doc._id, 86400);
               res.status(200).json({
                 message: "Stop Vm"
               });
@@ -312,6 +316,10 @@ exports.meVmStart = function (req, res, next) {
             },
             function (err, doc) {
               console.log(doc);
+              // Stocke les Infos de la vm dans le cache
+              var infoVm = JSON.stringify(doc.Vms[0]);
+              client.set("InfoVm:" + doc._id, infoVm);
+              client.expire("InfoVm:" + doc._id, 86400);
               res.status(200).json({
                 message: "Start Vm"
               });
