@@ -173,7 +173,7 @@ function runDocker(idVM) {
       num_name = reply;
     }
     // reply is null when the key is missing 
-    var cmd = 'docker run -d -P --name name_' + num_name + ' spriet/testssh';
+    var cmd = 'docker run -d -p '+num_name+':22 --name name_' + num_name + ' spriet/testssh';
     console.log(cmd);
 
     exec(cmd, function (error, stdout, stderr) {
