@@ -18,7 +18,8 @@ function onConnect(socket) {
   });
 
   // Insert sockets below
-  require('../api/catalog/catalog.socket').register(socket);
+  require('../lib/dockerfile').register(socket);
+  // require('../api/catalog/catalog.socket').register(socket);
 }
 
 module.exports = function (socketio) {
@@ -32,10 +33,10 @@ module.exports = function (socketio) {
   // 1. You will need to send the token in `client/components/socket/socket.service.js`
   //
   // 2. Require authentication here:
-  // socketio.use(require('socketio-jwt').authorize({
-  //   secret: config.secrets.session,
-  //   handshake: true
-  // }));
+  socketio.use(require('socketio-jwt').authorize({
+    secret: config.secrets.session,
+    handshake: true
+  }));
 
   socketio.on('connection', function (socket) {
     socket.address = socket.handshake.address !== null ?
