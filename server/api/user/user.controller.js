@@ -240,13 +240,23 @@ exports.meVmStop = function (req, res, next) {
     }
   ]).exec((err, data) => {
     var infoVm = data[0].Vm;
-    if (data[0].Vm) {
-      console.log("Stop id :", data[0].Vm.idContainer);
-      docker.getContainer(data[0].Vm.idContainer).stop(function (err, data) {
+    if (infoVm) {
+      console.log("Stop id :", infoVm.idContainer);
+      docker.getContainer(infoVm.idContainer).stop(function (err, data) {
         console.log(data);
-        res.status(200).json({
-          message: "Stop Vm"
-        });
+        User.findOneAndUpdate({
+            "Vms._id": mongoose.Types.ObjectId(infoVm._id)
+          }, {
+            "$set": {
+              "Vms.$.info": "Off"
+            }
+          },
+          function (err, doc) {
+             res.status(200).json({
+              message: "Stop Vm"
+            });
+          }
+        );
       });
     } else {
       res.status(401).json({
