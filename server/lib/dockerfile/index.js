@@ -4,12 +4,7 @@ var Appli = require('../../api/appli/appli.model');
 var client = require('../../config/redis.js').client;
 var mongoose = require('mongoose');
 const Builder = require('node-dockerfile').Builder;
-var Docker = require('dockerode');
-var docker = new Docker({
-  // socketPath: '//./pipe/docker_engine',
-  socketPath: '/var/run/docker.sock',
-  version: 'v1.25'
-}); //defaults to above if env variables are not used
+var docker = require('../../config/dockerode').docker;
 var Rx = require('rxjs/Rx');
 var DockerStats = require('docker-stats-promise');
 const dockerStats = new DockerStats();
