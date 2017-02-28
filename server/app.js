@@ -33,7 +33,7 @@ var app = express();
 var server = require('http').Server(app);
 var socketio = require('socket.io')(server);
 
-dockerfile.statsVm(500, socketio);
+dockerfile.statsVm(2000, socketio);
 
 require('./config/socketio')(socketio);
 require('./config/express')(app);
