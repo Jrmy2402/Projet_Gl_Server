@@ -327,6 +327,72 @@ exports.meVmStart = function (req, res, next) {
 };
 
 /**
+ * Get my vm
+ */
+exports.meVmRemove = function (req, res, next) {
+  var vmId = req.params.id;
+  console.log("vmId :", vmId);
+  var userId = req.user._id;
+  User.aggregate([{
+      $unwind: '$Vms'
+    },
+    {
+      $match: {
+        'Vms._id': mongoose.Types.ObjectId(vmId),
+        '_id': userId
+      }
+    },
+    {
+      $project: {
+        'Vm': '$Vms'
+      }
+    }
+  ]).exec((err, data) => {
+    var infoVm = data[0].Vm;
+    if (infoVm) {
+      docker.getContainer(infoVm.idContainer).remove(function (err, data) {
+        console.log(data, err);
+        if (!err) {
+          User.update(
+              { "_id": userId },
+              { "$pull": { "Vms": { "_id":  mongoose.Types.ObjectId(infoVm._id) }} },
+              function(err, numAffected) { 
+                   console.log(data);
+                  // Stocke les Infos de la vm dans le cache
+                  res.status(200).json({
+                    message: "Remove Vm"
+                  });
+              }
+          );
+          // console.log("Start id :", infoVm.idContainer);
+          // User.findOneAndUpdate({
+          //     "Vms._id": mongoose.Types.ObjectId(infoVm._id)
+          //   }, {
+          //     "$set": {
+          //       "Vms.$.info": "On"
+          //     }
+          //   }, { 'new': true }).exec((err, data) => {
+          //     console.log(data);
+          //     // Stocke les Infos de la vm dans le cache
+          //     res.status(200).json({
+          //       message: "Start Vm"
+          //     });
+          //   });
+        } else {
+          res.status(500).json({
+                message: "Erreur remove Vm"
+          });
+        }
+      });
+    } else {
+      res.status(401).json({
+        message: "Erreur : Ce n'est pas votre vm!!"
+      });
+    }
+  });
+};
+
+/**
  * Authentication callback
  */
 exports.authCallback = function (req, res, next) {
