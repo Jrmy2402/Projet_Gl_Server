@@ -6,7 +6,8 @@ var mongoose = require('mongoose');
 const Builder = require('node-dockerfile').Builder;
 var Docker = require('dockerode');
 var docker = new Docker({
-  socketPath: '//./pipe/docker_engine',
+  // socketPath: '//./pipe/docker_engine',
+  socketPath: '/var/run/docker.sock',
   version: 'v1.25'
 }); //defaults to above if env variables are not used
 var Rx = require('rxjs/Rx');
@@ -173,7 +174,7 @@ function runDocker(idVM) {
       num_name = reply;
     }
     // reply is null when the key is missing 
-    var cmd = 'docker run -d -p '+num_name+':22 --name name_' + num_name + ' spriet/testssh';
+    var cmd = 'docker run -d -p ' + num_name + ':22 --name name_' + num_name + ' spriet/testssh';
     console.log(cmd);
 
     exec(cmd, function (error, stdout, stderr) {
@@ -201,12 +202,9 @@ function runDocker(idVM) {
                   "Vms.$.ip": "127.0.0.1",
                   "Vms.$.info": "On"
                 }
-              },
-              function (err, doc) {
-                console.log("runDocker : FINI")
-                // client.set("Value_name", Number(num_name) + 1);
-              }
-            );
+              },{ 'new': true }).exec((err, data) => {
+                console.log("Docker runDocker Fini!!");
+              });
           }
         });
       }
@@ -310,3 +308,46 @@ exports.register = function (socket) {
   });
 }
 
+exports.init = function () {
+  User.aggregate([{
+      $unwind: '$Vms'
+    },
+    {
+      $match: {
+        'Vms.info': 'On',
+      }
+    },
+    {
+      $project: {
+        'Vm': '$Vms'
+      }
+    }
+  ]).exec((err, data) => {
+    for (const vm of data) {
+      docker.getContainer(vm.Vm.idContainer).start(function (err, data) {
+        console.log(data, err);
+      });
+    }
+  });
+
+  User.aggregate([{
+      $unwind: '$Vms'
+    },
+    {
+      $match: {
+        'Vms.info': 'Off',
+      }
+    },
+    {
+      $project: {
+        'Vm': '$Vms'
+      }
+    }
+  ]).exec((err, data) => {
+    for (const vm of data) {
+      docker.getContainer(vm.Vm.idContainer).stop(function (err, data) {
+        console.log(data, err);
+      });
+    }
+  });
+}

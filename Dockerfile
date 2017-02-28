@@ -1,4 +1,4 @@
-FROM debian:jessie
+FROM debian:latest
  
 MAINTAINER Spriet Jeremy <jeremy.spriet@gmail.com>
 # Clone and install dockerfile

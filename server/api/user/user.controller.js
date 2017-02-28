@@ -10,7 +10,6 @@ var stripe = require('../../lib/stripe');
 var mongoose = require('mongoose');
 var dockerStats = dockerfile.dockerStats;
 var docker = require('../../config/dockerode').docker;
-var client = require('../../config/redis.js').client;
 
 var jwt = require('jsonwebtoken');
 
@@ -195,7 +194,6 @@ exports.meVmInfo = function (req, res, next) {
     },
     {
       $project: {
-        //_id: 0,
         'Vm': '$Vms'
       }
     }
@@ -234,7 +232,6 @@ exports.meVmStop = function (req, res, next) {
     },
     {
       $project: {
-        //_id: 0,
         'Vm': '$Vms'
       }
     }
@@ -251,13 +248,9 @@ exports.meVmStop = function (req, res, next) {
               "$set": {
                 "Vms.$.info": "Off"
               }
-            }).exec((err, data) => {
-              data.Vms[0].info = 'Off';
+            },{'new': true}).exec((err, data) => {
               console.log(data);
               // Stocke les Infos de la vm dans le cache
-              var infoVm = JSON.stringify(data.Vms[0]);
-              client.set("InfoVm:" + data.Vms[0]._id, infoVm);
-              client.expire("InfoVm:" + data.Vms[0]._id, 86400);
               res.status(200).json({
                 message: "Stop Vm"
               });
@@ -295,7 +288,6 @@ exports.meVmStart = function (req, res, next) {
     },
     {
       $project: {
-        //_id: 0,
         'Vm': '$Vms'
       }
     }
@@ -312,13 +304,9 @@ exports.meVmStart = function (req, res, next) {
               "$set": {
                 "Vms.$.info": "On"
               }
-            }).exec((err, data) => {
-              data.Vms[0].info = 'On';
+            }, { 'new': true }).exec((err, data) => {
               console.log(data);
               // Stocke les Infos de la vm dans le cache
-              var infoVm = JSON.stringify(data.Vms[0]);
-              client.set("InfoVm:" + data.Vms[0]._id, infoVm);
-              client.expire("InfoVm:" + data.Vms[0]._id, 86400);
               res.status(200).json({
                 message: "Start Vm"
               });

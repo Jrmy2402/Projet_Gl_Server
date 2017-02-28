@@ -25,26 +25,8 @@ if (config.seedDB) {
 	require('./config/seed');
 }
 
-User.aggregate([{
-		$unwind: '$Vms'
-	},
-	{
-		$match: {
-			'Vms.info': 'On',
-		}
-	},
-	{
-		$project: {
-			'Vm': '$Vms'
-		}
-	}
-]).exec((err, data) => {
-	for (const vm of data) {
-		docker.getContainer(vm.Vm.idContainer).start(function (err, data) {
-			console.log(data);
-		});
-	}
-});
+//Init les Vms dockers
+dockerfile.init();
 
 // Setup server
 var app = express();

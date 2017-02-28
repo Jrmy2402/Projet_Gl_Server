@@ -4,6 +4,7 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var crypto = require('crypto');
 var vm = require('../vm/vm.model').schema;
+var client = require('../../config/redis.js').client;
 
 // Structure BDD user
 
@@ -22,6 +23,7 @@ var UserSchema = new Schema({
   provider: String,
   salt: String
 });
+
 
 /**
  * Virtuals
@@ -106,6 +108,18 @@ UserSchema
     else
       next();
   });
+
+  UserSchema
+    .post('findOneAndUpdate', function (doc, next) {
+        for(const d of doc.Vms) {
+          var infoVm = JSON.stringify(d);
+          client.set("InfoVm:" + d._id, infoVm);
+          client.expire("InfoVm:" + d._id, 86400);
+        }
+        next();
+    });
+
+
 
 /**
  * Methods

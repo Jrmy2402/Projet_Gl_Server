@@ -19,7 +19,7 @@ function onConnect(socket) {
 
   // Insert sockets below
   require('../lib/dockerfile').register(socket);
-  // require('../api/catalog/catalog.socket').register(socket);
+  require('../api/user/user.socket').register(socket);
 }
 
 module.exports = function (socketio) {
