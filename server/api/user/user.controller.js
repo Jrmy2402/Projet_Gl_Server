@@ -368,27 +368,13 @@ exports.meVmRemove = function (req, res, next) {
                 }
               },
               function (err, numAffected) {
-                console.log(data);
+                console.log(numAffected);
                 // Stocke les Infos de la vm dans le cache
                 res.status(200).json({
                   message: "Remove Vm"
                 });
               }
             );
-            // console.log("Start id :", infoVm.idContainer);
-            // User.findOneAndUpdate({
-            //     "Vms._id": mongoose.Types.ObjectId(infoVm._id)
-            //   }, {
-            //     "$set": {
-            //       "Vms.$.info": "On"
-            //     }
-            //   }, { 'new': true }).exec((err, data) => {
-            //     console.log(data);
-            //     // Stocke les Infos de la vm dans le cache
-            //     res.status(200).json({
-            //       message: "Start Vm"
-            //     });
-            //   });
           } else {
             res.status(500).json({
               message: "Erreur remove Vm"
