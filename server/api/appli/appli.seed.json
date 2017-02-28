@@ -6,6 +6,6 @@
 	}, {
 	    "name" : "python server",
 	    "info" : "BLALALALALALALALAL Nath est un gros PD.",
-		"RunCmd": "apt-get install python2.7"
+		"RunCmd": "apt-get install python3.4"
 	}
 ]
