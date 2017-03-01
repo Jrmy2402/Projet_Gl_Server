@@ -1,0 +1,7 @@
+[
+	{
+	    "name" : "NodeJS",
+	    "info" : "Node.js is an open-source, cross-platform JavaScript runtime environment for developing a diverse variety of server tools and applications",
+		"RunCmd": "curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash - && sudo apt-get install nodejs"
+	}
+]
