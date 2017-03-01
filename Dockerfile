@@ -17,7 +17,7 @@ ARG DEBIAN_FRONTEND=noninteractive
  
 RUN curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash - && sudo apt-get install nodejs
  
-EXPOSE 22
+EXPOSE 22 80 443
  
 ENTRYPOINT /usr/sbin/sshd -D
 CMD ["bash"]

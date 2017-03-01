@@ -71,12 +71,11 @@ exports.generate = function (idVm) {
       if (myAppli) {
         for (let myA of myAppli) {
           dockerFile.run(myA.RunCmd);
-          // .newLine();
         }
       }
 
       dockerFile.newLine()
-        .expose(22)
+        .expose("22 80 443")
         .newLine()
         .entryPoint("/usr/sbin/sshd -D")
         .cmd(["bash"]);
@@ -89,7 +88,6 @@ exports.generate = function (idVm) {
         }
       });
 
-
     }).catch(function (error) {
       console.log(error);
     });
@@ -97,45 +95,6 @@ exports.generate = function (idVm) {
   });
 
 };
-
-exports.infoVm = function (idVm, res) {
-  // return Rx.Observable.create((observer) => {
-  var container = docker.getContainer(idVm);
-  // container.stop(function (err, data) {
-  //   console.log(data);
-  // });
-  // container.start(function (err, data) {
-  //   console.log(data);
-  // });
-
-
-
-  // container.start(function (err, data) {
-  //   console.log(data);
-  // });
-  // query API for container info
-  container.stats({
-    stream: false
-  }, function (err, stream) {
-    // to close the stream you need to use a nested method from inside the stream itself
-    var cpuDelta = stream.cpu_stats.cpu_usage.total_usage - stream.precpu_stats.cpu_usage.total_usage;
-    var systemDelta = stream.cpu_stats.system_cpu_usage - stream.precpu_stats.system_cpu_usage;
-    var RESULT_CPU_USAGE = cpuDelta / systemDelta * 100;
-    console.log(RESULT_CPU_USAGE, stream);
-    res.json({
-      cpu: RESULT_CPU_USAGE,
-      cpuDelta: cpuDelta,
-      memory_stats: stream.memory_stats
-    });
-    // stream.destroy()
-  });
-  // container.inspect(function (err, data) {
-  //   console.log(data);
-  //   // observer.next(data);
-  //   // observer.complete();
-  // });
-  // });
-}
 
 function builbImage(idVM) {
   var exec = require('child_process').exec;
@@ -161,50 +120,45 @@ function builbImage(idVM) {
 function runDocker(idVM) {
   var exec = require('child_process').exec;
   client.incr("Value_name", function (err, reply) {
-    var num_name;
+    var valuePortSsh = reply;
     console.log(reply);
-    if (err) {
-      num_name = 1;
-    } else {
-      num_name = reply;
-    }
-    // reply is null when the key is missing 
-    var cmd = 'docker run -d -p ' + num_name + ':22 --memory="300m" --memory-swap="1g" --name name_' + num_name + ' spriet/testssh';
-    console.log(cmd);
+    client.incr("Value_name", function (err, reply2) {
+      var valuePortHttp = reply2;
+      client.incr("Value_name", function (err, reply3) {
+        var valuePortHttps = reply3;
 
-    exec(cmd, function (error, stdout, stderr) {
-      if (error) {
-        if (error.code === 125) {
-          console.error(error.stack)
-        }
-      } else {
-        var idContainer = stdout.substring(0, stdout.length - 1);
-        var cmd2 = 'docker port name_' + num_name + ' 22';
-        exec(cmd2, function (error, stdout, stderr) {
+        // reply is null when the key is missing 
+        var cmd = 'docker run -d -p ' + valuePortSsh + ':22 -p ' + valuePortHttps + ':443 -p ' + valuePortHttp + ':80 --memory="300m" --memory-swap="1g" --name name_' + valuePortSsh + ' spriet/testssh';
+        console.log(cmd);
+
+        exec(cmd, function (error, stdout, stderr) {
           if (error) {
             if (error.code === 125) {
               console.error(error.stack)
             }
           } else {
-            var port = stdout.substring(0, stdout.length - 1).slice(8);
-            console.log(port);
+            var idContainer = stdout.substring(0, stdout.length - 1);
             User.findOneAndUpdate({
-                "Vms._id": mongoose.Types.ObjectId(idVM)
-              }, {
-                "$set": {
-                  "Vms.$.idContainer": idContainer,
-                  "Vms.$.port": port,
-                  "Vms.$.ip": "127.0.0.1",
-                  "Vms.$.info": "On"
-                }
-              },{ 'new': true }).exec((err, data) => {
-                console.log("Docker runDocker Fini!!");
-              });
+              "Vms._id": mongoose.Types.ObjectId(idVM)
+            }, {
+              "$set": {
+                "Vms.$.idContainer": idContainer,
+                "Vms.$.port": valuePortSsh,
+                "Vms.$.portHttp": valuePortHttp,
+                "Vms.$.portHttps": valuePortHttps,
+                "Vms.$.ip": "172.31.1.25",
+                "Vms.$.info": "On"
+              }
+            }, {
+              'new': true
+            }).exec((err, data) => {
+              console.log("Docker runDocker Fini!!");
+            });
           }
         });
-      }
-    });
+      });
 
+    });
   });
 
 }
