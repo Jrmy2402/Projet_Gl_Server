@@ -3,3 +3,6 @@ jsonwebtoken: expiresInMinutes and expiresInSeconds is deprecated. (/home/isen/s
 Use "expiresIn" expressed in seconds.
 jsonwebtoken: expiresInMinutes and expiresInSeconds is deprecated. (/home/isen/server/server/api/user/user.controller.js:42:21)
 Use "expiresIn" expressed in seconds.
+(node:24675) DeprecationWarning: crypto.pbkdf2 without specifying a digest is deprecated. Please specify a digest
+jsonwebtoken: expiresInMinutes and expiresInSeconds is deprecated. (/home/isen/server/server/api/user/user.controller.js:42:21)
+Use "expiresIn" expressed in seconds.
