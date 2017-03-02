@@ -8,6 +8,7 @@
 var Catalog = require('../api/catalog/catalog.model');
 var User = require('../api/user/user.model');
 var Appli = require('../api/appli/appli.model');
+var Turnkey = require('../api/turnkey/turnkey.model');
 
 
 // Insert seed data below
@@ -32,4 +33,12 @@ var appliSeed = require('../api/appli/appli.seed.json');
 // Insert seed inserts below
 Appli.find({}).remove(function() {
   Appli.create(appliSeed);
+});
+
+
+// Insert seed inserts below
+var turnkeySeed = require('../api/turnkey/turnkey.seed.json');
+
+Turnkey.find({}).remove(function() {
+  Turnkey.create(turnkeySeed);
 });

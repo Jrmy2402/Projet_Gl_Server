@@ -6,26 +6,26 @@
 	}, {
 	    "name" : "Python 3.4",
 	    "info" : "Python is a widely used high-level programming language for general-purpose programming",
-		"RunCmd": "apt-get install python3.4"
+		"RunCmd": "apt-get install -y python3.4"
 	}, {
 	    "name" : "SQL Server",
 	    "info" : "Structured Query Language is a domain-specific language used in programming and designed for managing data held in a relational database",
-		"RunCmd": "apt-get install mysql-server"
+		"RunCmd": "apt-get install -y mysql-server"
 	},{
 	    "name" : "Apache 2",
 	    "info" : "Apache is the world's most used web server software",
-		"RunCmd": "apt-get install apache2"
+		"RunCmd": "apt-get install -y apache2"
 	},{
 	    "name" : "PHP 5",
 	    "info" : "PHP is a server-side scripting language designed primarily for web development but also used as a general-purpose programming language",
-		"RunCmd": "apt-get install php5"
+		"RunCmd": "apt-get install -y php5"
 	},{
 	    "name" : "Java",
 	    "info" : "Java is a general-purpose computer programming language that is concurrent, class-based, object-oriented, and specifically designed to have as few implementation dependencies as possible",
-		"RunCmd": "apt-get install default-jre"
+		"RunCmd": "apt-get install -y default-jre"
 	},{
 	    "name" : "Nginx",
 	    "info" : "NGINX is one of a handful of servers written to address the C10K problem. Unlike traditional servers, NGINX doesn't rely on threads to handle requests",
-		"RunCmd": "apt-get install nginx"
+		"RunCmd": "apt-get install -y nginx"
 	}
 ]

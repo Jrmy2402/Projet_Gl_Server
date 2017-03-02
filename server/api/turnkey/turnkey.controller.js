@@ -1,62 +1,62 @@
 /**
  * Using Rails-like standard naming convention for endpoints.
- * GET     /appli               ->  index
- * POST    /appli               ->  create
- * GET     /appli/:id           ->  show
- * PUT     /appli/:id           ->  update
- * DELETE  /appli/:id           ->  destroy
+ * GET     /turnkey               ->  index
+ * POST    /turnkey               ->  create
+ * GET     /turnkey/:id           ->  show
+ * PUT     /turnkey/:id           ->  update
+ * DELETE  /turnkey/:id           ->  destroy
  */
 
 'use strict';
 
 var _ = require('lodash');
-var appli = require('./appli.model');
+var turnkey = require('./turnkey.model');
 
-// Get list of appli
+// Get list of turnkey
 exports.index = function(req, res) {
-  appli.find(function (err, appli) {
+  turnkey.find(function (err, turnkey) {
     if(err) { return handleError(res, err); }
-    return res.status(200).json(appli);
+    return res.status(200).json(turnkey);
   });
 };
 
-// Get a single appli
+// Get a single turnkey
 exports.show = function(req, res) {
-  appli.findById(req.params.id, function (err, appli) {
+  turnkey.findById(req.params.id, function (err, turnkey) {
     if(err) { return handleError(res, err); }
-    if(!appli) { return res.status(404).send('Not Found'); }
-    return res.json(appli);
+    if(!turnkey) { return res.status(404).send('Not Found'); }
+    return res.json(turnkey);
   });
 };
 
-// Creates a new appli in the DB.
+// Creates a new turnkey in the DB.
 exports.create = function(req, res) {
-  appli.create(req.body, function(err, appli) {
+  turnkey.create(req.body, function(err, turnkey) {
     if(err) { return handleError(res, err); }
-    return res.status(201).json(appli);
+    return res.status(201).json(turnkey);
   });
 };
 
-// Updates an existing appli in the DB.
+// Updates an existing turnkey in the DB.
 exports.update = function(req, res) {
   if(req.body._id) { delete req.body._id; }
-  appli.findById(req.params.id, function (err, appli) {
+  turnkey.findById(req.params.id, function (err, turnkey) {
     if (err) { return handleError(res, err); }
-    if(!appli) { return res.status(404).send('Not Found'); }
-    var updated = _.merge(appli, req.body);
+    if(!turnkey) { return res.status(404).send('Not Found'); }
+    var updated = _.merge(turnkey, req.body);
     updated.save(function (err) {
       if (err) { return handleError(res, err); }
-      return res.status(200).json(appli);
+      return res.status(200).json(turnkey);
     });
   });
 };
 
-// Deletes a appli from the DB.
+// Deletes a turnkey from the DB.
 exports.destroy = function(req, res) {
-  appli.findById(req.params.id, function (err, appli) {
+  turnkey.findById(req.params.id, function (err, turnkey) {
     if(err) { return handleError(res, err); }
-    if(!appli) { return res.status(404).send('Not Found'); }
-    appli.remove(function(err) {
+    if(!turnkey) { return res.status(404).send('Not Found'); }
+    turnkey.remove(function(err) {
       if(err) { return handleError(res, err); }
       return res.status(204).send('No Content');
     });

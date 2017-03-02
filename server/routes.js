@@ -12,7 +12,7 @@ module.exports = function(app) {
   app.use('/api/catalogs', require('./api/catalog'));
   app.use('/api/users', require('./api/user'));
   app.use('/api/applis', require('./api/appli'));
-  //app.use('/api/vms', require('./api/user/vm'));
+  app.use('/api/turnkeys', require('./api/turnkey'));
 
   app.use('/auth', require('./auth'));  
 
