@@ -9,7 +9,7 @@ var Catalog = require('../api/catalog/catalog.model');
 var User = require('../api/user/user.model');
 var Appli = require('../api/appli/appli.model');
 var Turnkey = require('../api/turnkey/turnkey.model');
-
+var Admin = require('../api/admin/admin.model');
 
 // Insert seed data below
 var catalogSeed = require('../api/catalog/catalog.seed.json');
@@ -41,4 +41,11 @@ var turnkeySeed = require('../api/turnkey/turnkey.seed.json');
 
 Turnkey.find({}).remove(function() {
   Turnkey.create(turnkeySeed);
+});
+
+// Insert seed inserts below
+var adminSeed = require('../api/admin/admin.seed.json');
+
+Admin.find({}).remove(function() {
+  Admin.create(adminSeed);
 });

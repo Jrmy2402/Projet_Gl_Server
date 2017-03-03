@@ -2,6 +2,7 @@
 
 var User = require('./user.model');
 var Vm = require('../vm/vm.model');
+var Admin = require('../admin/admin.model');
 
 var passport = require('passport');
 var config = require('../../config/environment');
@@ -78,6 +79,7 @@ exports.addvm = function (req, res, next) {
       //     res.status(402).json({message : "Erreur avec le paiement."});
       //   }
       // );
+      Admin.findByIdAndUpdate("58b7f5b6a616f40ee068cea4", {$inc: {nbvm:1}}, function (err, data) {});
       res.status(200).json({
         message: 'Vm en création'
       });

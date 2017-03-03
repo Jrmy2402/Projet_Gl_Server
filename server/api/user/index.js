@@ -21,4 +21,5 @@ router.post('/', controller.create);
 router.post('/addvm', auth.isAuthenticated(), controller.addvm);
 router.delete('/:id/delvm/:idvm', controller.delvm);
 
+
 module.exports = router;
