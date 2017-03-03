@@ -15,7 +15,7 @@ RUN mkdir -p /var/run/sshd
 RUN apt-get install -y sudo && apt-get install -y curl
 ARG DEBIAN_FRONTEND=noninteractive
  
-RUN curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash - && sudo apt-get install nodejs
+RUN apt-get install -y php5
  
 EXPOSE 22 80 443
  

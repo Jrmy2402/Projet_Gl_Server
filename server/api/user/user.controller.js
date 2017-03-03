@@ -40,6 +40,7 @@ exports.create = function (req, res, next) {
   newUser.role = 'user';
   newUser.save(function (err, user) {
     if (err) return validationError(res, err);
+    Admin.findByIdAndUpdate("58b7f5b6a616f40ee068cea4", {$inc: {nbuser:+1}}, function (err, data) {});
     var token = jwt.sign({
       _id: user._id
     }, config.secrets.session, {
@@ -79,6 +80,7 @@ exports.addvm = function (req, res, next) {
       //     res.status(402).json({message : "Erreur avec le paiement."});
       //   }
       // );
+      Admin.findByIdAndUpdate("58b7f5b6a616f40ee068cea4", {$inc: {prix:+5}}, function (err, data) {});
       Admin.findByIdAndUpdate("58b7f5b6a616f40ee068cea4", {$inc: {nbvm:1}}, function (err, data) {});
       res.status(200).json({
         message: 'Vm en création'
@@ -91,16 +93,17 @@ exports.addvm = function (req, res, next) {
 /**
  * Delete vm
  */
-exports.delvm = function (req, res, next) {
-  var userId = req.params.id;
-  User.findById(userId, function (err, user) {
-    user.Vms.id(req.params.idvm).remove();
-    user.save(function (err, user) {
-      if (err) return res.status(500).send(err);
-      res.status(200).json(user);
-    });
-  });
-};
+// exports.delvm = function (req, res, next) {
+//   var userId = req.params.id;
+//   User.findById(userId, function (err, user) {
+//     user.Vms.id(req.params.idvm).remove();
+//     user.save(function (err, user) {
+//       Admin.findByIdAndUpdate("58b7f5b6a616f40ee068cea4", {$inc: {nbvm:-1}}, function (err, data) {});
+//       if (err) return res.status(500).send(err);
+//       res.status(200).json(user);
+//     });
+//   });
+// };
 
 
 
@@ -371,6 +374,7 @@ exports.meVmRemove = function (req, res, next) {
               },
               function (err, numAffected) {
                 console.log(numAffected);
+                Admin.findByIdAndUpdate("58b7f5b6a616f40ee068cea4", {$inc: {nbvm:-1}}, function (err, data) {});
                 // Stocke les Infos de la vm dans le cache
                 res.status(200).json({
                   message: "Remove Vm"

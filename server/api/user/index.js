@@ -14,12 +14,12 @@ router.get('/meVm', auth.isAuthenticated(), controller.meVm);
 router.get('/meVm/:id', auth.isAuthenticated(), controller.meVmInfo);
 router.get('/meVmStop/:id', auth.isAuthenticated(), controller.meVmStop);
 router.get('/meVmStart/:id', auth.isAuthenticated(), controller.meVmStart);
-router.get('/meVmRemove/:id', auth.isAuthenticated(), controller.meVmRemove);
+router.delete('/meVmRemove/:id', auth.isAuthenticated(), controller.meVmRemove);
 router.put('/:id/password', auth.isAuthenticated(), controller.changePassword);
 router.get('/:id', auth.isAuthenticated(), controller.show);
 router.post('/', controller.create);
 router.post('/addvm', auth.isAuthenticated(), controller.addvm);
-router.delete('/:id/delvm/:idvm', controller.delvm);
+//router.delete('/:id/delvm/:idvm', controller.delvm);
 
 
 module.exports = router;
