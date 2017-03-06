@@ -15,7 +15,6 @@ RUN mkdir -p /var/run/sshd
 RUN apt-get install -y sudo && apt-get install -y curl
 ARG DEBIAN_FRONTEND=noninteractive
  
-RUN apt-get install -y php5
  
 EXPOSE 22 80 443
  
