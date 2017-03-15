@@ -21,6 +21,7 @@ function onConnect(socket) {
   require('../lib/dockerfile').register(socket);
   require('../lib/os-monitor').register(socket);
   require('../api/user/user.socket').register(socket);
+  require('../api/admin/admin.socket').register(socket);
 }
 
 module.exports = function (socketio) {

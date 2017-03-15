@@ -40,7 +40,13 @@ exports.create = function (req, res, next) {
   newUser.role = 'user';
   newUser.save(function (err, user) {
     if (err) return validationError(res, err);
-    Admin.findByIdAndUpdate("58b7f5b6a616f40ee068cea4", {$inc: {nbuser:+1}}, function (err, data) {});
+    Admin.findByIdAndUpdate("58b7f5b6a616f40ee068cea4", {
+      $inc: {
+        nbuser: +1
+      }
+    }, {
+      'new': true
+    }, function (err, data) {});
     var token = jwt.sign({
       _id: user._id
     }, config.secrets.session, {
@@ -80,8 +86,20 @@ exports.addvm = function (req, res, next) {
       //     res.status(402).json({message : "Erreur avec le paiement."});
       //   }
       // );
-      Admin.findByIdAndUpdate("58b7f5b6a616f40ee068cea4", {$inc: {prix:+5}}, function (err, data) {});
-      Admin.findByIdAndUpdate("58b7f5b6a616f40ee068cea4", {$inc: {nbvm:1}}, function (err, data) {});
+      Admin.findByIdAndUpdate("58b7f5b6a616f40ee068cea4", {
+        $inc: {
+          prix: +5
+        }
+      }, {
+        'new': true
+      }, function (err, data) {});
+      Admin.findByIdAndUpdate("58b7f5b6a616f40ee068cea4", {
+        $inc: {
+          nbvm: 1
+        }
+      }, {
+        'new': true
+      }, function (err, data) {});
       res.status(200).json({
         message: 'Vm en création'
       });
@@ -374,7 +392,13 @@ exports.meVmRemove = function (req, res, next) {
               },
               function (err, numAffected) {
                 console.log(numAffected);
-                Admin.findByIdAndUpdate("58b7f5b6a616f40ee068cea4", {$inc: {nbvm:-1}}, function (err, data) {});
+                Admin.findByIdAndUpdate("58b7f5b6a616f40ee068cea4", {
+                  $inc: {
+                    nbvm: -1
+                  }
+                }, {
+                  'new': true
+                }, function (err, data) {});
                 // Stocke les Infos de la vm dans le cache
                 res.status(200).json({
                   message: "Remove Vm"

@@ -4,33 +4,33 @@
 
 'use strict';
 
-var user = require('./user.model');
+var admin = require('./admin.model');
 var client = require('../../config/redis.js').client;
 
 exports.register = function (socket) {
-  user.hooks.post('save', function (doc) {
+  admin.hooks.post('save', function (doc) {
     onSave(socket, doc);
   });
-  user.hooks.post('remove', function (doc) {
+  admin.hooks.post('remove', function (doc) {
     onRemove(socket, doc);
   });
-  user.hooks.post('findOneAndUpdate', function (doc) {
+  admin.hooks.post('findOneAndUpdate', function (doc) {
     onUpdate(socket, doc);
   });
 }
 
 function onSave(socket, doc, cb) {
-  socket.emit('user:save', doc);
+  socket.emit('admin:save', doc);
 }
 
 function onRemove(socket, doc, cb) {
-  socket.emit('user:remove', doc);
+  socket.emit('admin:remove', doc);
 }
 
 function onUpdate(socket, doc, cb) {
-  if(doc.Vms) {
-    if(socket.decoded_token._id === doc._doc._id.toString()){
-      socket.emit('vm:update', doc.Vms);
+  if(doc) {
+    if(socket.decoded_token.role === "admin"){
+      socket.emit('admin:update', doc);
     }
   }
 }
