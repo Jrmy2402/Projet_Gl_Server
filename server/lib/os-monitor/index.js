@@ -7,7 +7,7 @@ exports.statsOs = function statsOs(time, socketio) {
     client.smembers("SocketDemandeInfoOs", (err, idSockets) => {
       console.log(idSockets)
       if(idSockets.length>0){
-        diskspace.check('C', function (err, total, free, status)
+        diskspace.check('/', function (err, total, free, status)
         {
            for (const id of idSockets) {
               console.log("Envoie idSocket for OS : ", id);
