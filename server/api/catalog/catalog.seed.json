@@ -4,7 +4,7 @@
 	"create_date": "10-10-10",
 	"info": "Best VM EVER",
 	"active": "1",
-	"FromCmd": "ubuntu:16.04"
+	"FromCmd": "ubuntu:14.04"
 }, {
 	"name": "Debian",
 	"update_date": "10-10-10",

@@ -28,6 +28,8 @@ client.keys("Socket:*", (err, keys) => {
         client.del(k);
     }
 });
+client.del("SocketDemandeInfoOs");
+
 
 
 exports.client = client;

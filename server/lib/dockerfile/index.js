@@ -79,14 +79,17 @@ exports.generate = function (idVm) {
         .newLine()
         .entryPoint("/usr/sbin/sshd -D")
         .cmd(["bash"]);
-
-      dockerFile.write("./Dockerfile", true, function (err, content) {
-        if (err) console.log("Failed to write: %s", err);
-        else {
-          console.log("Successfully wrote the dockerfile!");
-          builbImage(idVm);
-        }
+      
+      client.incr("numDockerfile", function (err, res) {
+        dockerFile.write("Dockerfiles/Dockerfile"+res, true, function (err, content) {
+          if (err) console.log("Failed to write: %s", err);
+          else {
+            console.log("Successfully wrote the dockerfile!");
+            builbImage(idVm, res);
+          }
+        });
       });
+
 
     }).catch(function (error) {
       console.log(error);
@@ -96,10 +99,10 @@ exports.generate = function (idVm) {
 
 };
 
-function builbImage(idVM) {
+function builbImage(idVM, res) {
   var exec = require('child_process').exec;
   const spawn = require('child_process').spawn;
-  const ls = spawn('docker', ['build', '-t', 'spriet/testssh', '.']);
+  const ls = spawn('docker', ['build', '-t', 'spriet/testssh'+res, '-f' ,'./Dockerfiles/Dockerfile'+res, '.']);
 
   ls.stdout.on('data', (data) => {
     console.log(`stdout: ${data}`);
@@ -112,12 +115,12 @@ function builbImage(idVM) {
   ls.on('close', (code) => {
     console.log(`child process exited with code ${code}`);
     if (code === 0) {
-      runDocker(idVM);
+      runDocker(idVM, res);
     }
   });
 }
 
-function runDocker(idVM) {
+function runDocker(idVM, res) {
   var exec = require('child_process').exec;
   client.incr("Value_name", function (err, reply) {
     var valuePortSsh = reply;
@@ -128,7 +131,7 @@ function runDocker(idVM) {
         var valuePortHttps = reply3;
 
         // reply is null when the key is missing 
-        var cmd = 'docker run -d -p ' + valuePortSsh + ':22 -p ' + valuePortHttps + ':443 -p ' + valuePortHttp + ':80 --memory="300m" --memory-swap="1g" --name name_' + valuePortSsh + ' spriet/testssh';
+        var cmd = 'docker run -d -p ' + valuePortSsh + ':22 -p ' + valuePortHttps + ':443 -p ' + valuePortHttp + ':80 --memory="300m" --memory-swap="1g" spriet/testssh'+res;
         console.log(cmd);
 
         exec(cmd, function (error, stdout, stderr) {

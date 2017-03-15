@@ -13,6 +13,8 @@ var config = require('./config/environment');
 var dockerfile = require('./lib/dockerfile')
 var User = require('./api/user/user.model');
 var docker = require('./config/dockerode').docker;
+var monitor = require('./lib/os-monitor');
+
 
 // Connect to database
 mongoose.connect(config.mongo.uri, config.mongo.options);
@@ -34,6 +36,7 @@ var server = require('http').Server(app);
 var socketio = require('socket.io')(server);
 
 dockerfile.statsVm(2000, socketio);
+monitor.statsOs(2000, socketio);
 
 require('./config/socketio')(socketio);
 require('./config/express')(app);

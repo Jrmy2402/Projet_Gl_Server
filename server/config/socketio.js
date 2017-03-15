@@ -19,6 +19,7 @@ function onConnect(socket) {
 
   // Insert sockets below
   require('../lib/dockerfile').register(socket);
+  require('../lib/os-monitor').register(socket);
   require('../api/user/user.socket').register(socket);
 }
 
