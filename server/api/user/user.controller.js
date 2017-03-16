@@ -76,34 +76,34 @@ exports.addvm = function (req, res, next) {
     user.Vms.push(vmSchema);
     console.log(idVm);
     user.save(function (err, user) {
-      // stripe.payment(req.body.tokenCard).subscribe(
-      //   (data) => {
-      //     console.log(data);
-      //     res.status(200).json(user);
-      //   },
-      //   (err) => {
-      //     console.error(err);
-      //     res.status(402).json({message : "Erreur avec le paiement."});
-      //   }
-      // );
-      Admin.findByIdAndUpdate("58b7f5b6a616f40ee068cea4", {
-        $inc: {
-          prix: +5
+      stripe.payment(req.body.tokenCard).subscribe(
+        (data) => {
+          console.log(data);
+          Admin.findByIdAndUpdate("58b7f5b6a616f40ee068cea4", {
+            $inc: {
+              prix: +5
+            }
+          }, {
+            'new': true
+          }, function (err, data) {});
+          Admin.findByIdAndUpdate("58b7f5b6a616f40ee068cea4", {
+            $inc: {
+              nbvm: 1
+            }
+          }, {
+            'new': true
+          }, function (err, data) {});
+          dockerfile.generate(idVm);
+          res.status(200).json({
+            message: 'Vm en création'
+          });
+        },
+        (err) => {
+          console.error(err);
+          res.status(402).json({message : "Erreur avec le paiement."});
         }
-      }, {
-        'new': true
-      }, function (err, data) {});
-      Admin.findByIdAndUpdate("58b7f5b6a616f40ee068cea4", {
-        $inc: {
-          nbvm: 1
-        }
-      }, {
-        'new': true
-      }, function (err, data) {});
-      res.status(200).json({
-        message: 'Vm en création'
-      });
-      dockerfile.generate(idVm);
+      );
+
     });
   });
 };

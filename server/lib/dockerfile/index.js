@@ -198,15 +198,25 @@ exports.register = function (socket) {
   socket.on('statsVm', (vmId) => {
     console.log('idVM', vmId, socket.id, socket.decoded_token._id);
     var userId = socket.decoded_token._id;
-    User.aggregate([{
-        $unwind: '$Vms'
-      },
-      {
+    let matchObject;
+    if(socket.decoded_token.role === 'admin'){
+      matchObject = {
+        $match: {
+          'Vms._id': mongoose.Types.ObjectId(vmId),
+        }
+      }
+    } else {
+      matchObject = {
         $match: {
           'Vms._id': mongoose.Types.ObjectId(vmId),
           '_id': mongoose.Types.ObjectId(userId)
         }
+      }
+    }
+    User.aggregate([{
+        $unwind: '$Vms'
       },
+      matchObject,
       {
         $project: {
           'Vm': '$Vms'
