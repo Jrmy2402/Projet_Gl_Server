@@ -134,7 +134,7 @@ exports.show = function (req, res, next) {
   User.findById(userId, function (err, user) {
     if (err) return next(err);
     if (!user) return res.status(401).send('Unauthorized');
-    res.json(user.profile);
+    res.json(user);
   });
 };
 
