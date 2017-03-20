@@ -1,6 +1,6 @@
 [
 	{
-	    "distribution" : "Debian",
+	    "distribution" : "Debian Jessie",
 	    "info" : "Serveur Web PHP",
 		"application": ["Apache 2","PHP 5"]
 	}
