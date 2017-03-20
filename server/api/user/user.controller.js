@@ -361,7 +361,7 @@ exports.meVmRemove = function (req, res, next) {
   console.log("vmId :", vmId);
   var userId = req.user._id;
   let matchObject;
-  if(socket.decoded_token.role === 'admin'){
+  if(req.user.role === 'admin'){
     matchObject = {
       $match: {
         'Vms._id': mongoose.Types.ObjectId(vmId),
