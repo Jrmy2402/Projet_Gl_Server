@@ -14,7 +14,7 @@ var dockerfile = require('./lib/dockerfile')
 var User = require('./api/user/user.model');
 var docker = require('./config/dockerode').docker;
 var monitor = require('./lib/os-monitor');
-
+const path = require('path');
 
 // Connect to database
 mongoose.connect(config.mongo.uri, config.mongo.options);
@@ -34,13 +34,15 @@ dockerfile.init();
 var app = express();
 var server = require('http').Server(app);
 var socketio = require('socket.io')(server);
-
+console.log(path.join(__dirname, 'dist'));
+app.use(express.static(path.join(__dirname,'../../client', 'dist')));
 dockerfile.statsVm(2000, socketio);
 monitor.statsOs(2000, socketio);
 
 require('./config/socketio')(socketio);
 require('./config/express')(app);
 require('./routes')(app);
+
 
 // Start server
 server.listen(config.port, config.ip, function () {

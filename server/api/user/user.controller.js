@@ -360,15 +360,25 @@ exports.meVmRemove = function (req, res, next) {
   var vmId = req.params.id;
   console.log("vmId :", vmId);
   var userId = req.user._id;
+  let matchObject;
+  if(socket.decoded_token.role === 'admin'){
+    matchObject = {
+      $match: {
+        'Vms._id': mongoose.Types.ObjectId(vmId),
+      }
+    }
+  } else {
+    matchObject = {
+      $match: {
+        'Vms._id': mongoose.Types.ObjectId(vmId),
+        '_id': mongoose.Types.ObjectId(userId)
+      }
+    }
+  }
   User.aggregate([{
       $unwind: '$Vms'
     },
-    {
-      $match: {
-        'Vms._id': mongoose.Types.ObjectId(vmId),
-        '_id': userId
-      }
-    },
+    matchObject,
     {
       $project: {
         'Vm': '$Vms'
