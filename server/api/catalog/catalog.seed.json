@@ -2,14 +2,14 @@
 	"name": "Ubuntu 14.04",
 	"update_date": "10-10-10",
 	"create_date": "10-10-10",
-	"info": "Best VM EVER",
+	"info": "Ubuntu is the most popular operating system running in hosted environments",
 	"active": "1",
 	"FromCmd": "ubuntu:14.04"
 }, {
 	"name": "Debian Jessie",
 	"update_date": "10-10-10",
 	"create_date": "10-10-10",
-	"info": "Best VM EVER",
+	"info": "The Debian is one of the most popular for personal computers and network servers, and has been used as a base for many other distributions.",
 	"active": "1",
 	"FromCmd": "debian:jessie"
 }]
