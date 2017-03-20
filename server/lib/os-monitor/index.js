@@ -5,7 +5,6 @@ var client = require('../../config/redis.js').client;
 exports.statsOs = function statsOs(time, socketio) {
   setInterval(() => {
     client.smembers("SocketDemandeInfoOs", (err, idSockets) => {
-      console.log(idSockets)
       if(idSockets.length>0){
         diskspace.check('/', function (err, total, free, status)
         {
