@@ -1,12 +1,12 @@
 [{
-	"name": "Ubuntu",
+	"name": "Ubuntu 14.04",
 	"update_date": "10-10-10",
 	"create_date": "10-10-10",
 	"info": "Best VM EVER",
 	"active": "1",
 	"FromCmd": "ubuntu:14.04"
 }, {
-	"name": "Debian",
+	"name": "Debian jessie",
 	"update_date": "10-10-10",
 	"create_date": "10-10-10",
 	"info": "Best VM EVER",
