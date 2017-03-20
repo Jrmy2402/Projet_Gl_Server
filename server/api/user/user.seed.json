@@ -1,18 +1,9 @@
 [
 	{
 	    "provider": "local",
-	    "lastname": "Mehu",
-		"firstname": "Simon",
-		"address": "Pleyben",
-		"phone": "0669696969",
-	    "email": "test@test.com",
-	    "password": "test",
-		"VM": [{"OS": "Windows","version": 10,"port": 4455},{"OS": "Ubuntu","version":"16.04","port" : "6666"}]
-  	}, {
-	    "provider": "local",
 	    "role": "admin",
 	    "lastname": "Admin",
-		"firstname": "fname",
+		"firstname": "Admin",
 	    "email": "admin@admin.com",
 	    "password": "admin"
   	}
