@@ -6,7 +6,7 @@
 	"active": "1",
 	"FromCmd": "ubuntu:14.04"
 }, {
-	"name": "Debian jessie",
+	"name": "Debian Jessie",
 	"update_date": "10-10-10",
 	"create_date": "10-10-10",
 	"info": "Best VM EVER",
